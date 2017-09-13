@@ -54,6 +54,7 @@ Protocol:
 
 Measurements:
 	Agreement:
+		@test_at_end
 		concensus = None
 		for node in nodes
 			if not corrupted node
@@ -66,6 +67,7 @@ Measurements:
 		return true
 	
 	Validity:
+		@test_at_end
 		if not corrupted sender
 			for node in nodes
 				if not corrupted node
