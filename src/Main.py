@@ -1,10 +1,9 @@
-from Experiment import *
-from ExperimentSetting import *
-from Environment import *
-from PKI import *
-from NaiveVoting import *
+from Experiment.ExperimentSetting import *
+from Experiment.Experiment import *
+from Protocols.NaiveVoting import *
+from Measures.ByzantineMeasures import *
 
-setting = ExperimentSetting(10, 1, Environment, IdealPKI, NaiveVoting)
+setting = SynchronousByzantine(n=10, input=1, protocol=NaiveVoting, measure=[ByzValidity, ByzConsistency])
 exp = Experiment(setting)
 exp.run()
 exp.report()

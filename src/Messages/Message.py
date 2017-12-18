@@ -5,19 +5,19 @@ class Message:
         self.content = content
 
     def clone(self):
-        if self.content is Message:
+        if type(self.content) is Message:
             return Message(self.sender, self.content.clone())
         else:
             return Message(self.sender, self.content)
 
     def get_chain(self):
-        if self.content is Message:
+        if type(self.content) is Message:
             return str(self.content.get_chain()) + "|" + str(self.sender)
         else:
             return str(self.content) + "|" + str(self.sender)
 
     def get_extraction(self):
-        if self.content is Message:
+        if type(self.content) is Message:
             return self.content.get_extraction()
         else:
             return self.content

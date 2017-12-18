@@ -1,8 +1,9 @@
-from Message import Message
+from Messages.Message import Message
 
 
 class NaiveVoting:
 
+    name = "Naive Voting Protocol"
     SENDER = 0
 
     def __init__(self, env, pki):
@@ -22,7 +23,7 @@ class NaiveVoting:
             msgs = self.env.get_input_msgs(self)
             for msg in msgs:
                 if self.pki.verify(msg) and msg.get_sender() == NaiveVoting.SENDER and (msg.get_extraction() == 0 or msg.get_extraction() == 1):
-                    self.env.put_broadcast(self, self.pki.sign(self, Message(myid, msg.get_content())))
+                    self.env.put_broadcast(self, self.pki.sign(self, Message(myid, msg)))
         elif round == 2:
             msgs = self.env.get_input_msgs(self)
             seen = set()
