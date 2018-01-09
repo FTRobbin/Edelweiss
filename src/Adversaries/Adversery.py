@@ -12,7 +12,7 @@ class CrashAdversary:
         pass
 
 
-class HalfHalfSender:
+
 
     name = "Half-half Sender"
     SENDER = 0
