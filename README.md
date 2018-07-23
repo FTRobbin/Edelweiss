@@ -1,6 +1,6 @@
 # Edelweiss (Work in Progress)
 
-A light-weight consensus protocol simulator.
+A lightweight consensus protocol simulator.
 
 For safer and better consensus protocols!
 
