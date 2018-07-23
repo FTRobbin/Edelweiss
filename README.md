@@ -1,4 +1,4 @@
-# Edelweiss (Work in Progress)
+# Project Edelweiss (Work in Progress)
 
 A lightweight consensus protocol simulator.
 
