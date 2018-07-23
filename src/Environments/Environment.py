@@ -9,25 +9,25 @@ class SynByzEnvironment:
         return self.controller.n
 
     def get_f(self):
-        return self.controller.tf
+        return self.controller.f
 
     def get_round(self):
         return self.controller.round
 
-    def get_id(self, node):
-        return self.controller.node_id[node]
+    def get_id(self, sk):
+        return self.controller.node_id[sk]
 
-    def get_input(self, node):
+    def get_input(self, sk):
         return self.controller.input
 
-    def get_input_msgs(self, node):
-        return self.controller.get_message_buffer(node)
+    def get_input_msgs(self, sk):
+        return self.controller.get_message_buffer(sk)
 
-    def put_broadcast(self, node, msg):
+    def put_broadcast(self, sk, msg):
         self.controller.put_broadcast(msg)
 
-    def put_packet(self, node, msg, target):
+    def put_packet(self, sk, msg, target):
         self.controller.put_packet(msg, target)
 
-    def put_output(self, node, output):
-        self.controller.put_output(node, output)
+    def put_output(self, sk, output):
+        self.controller.put_output(sk, output)
