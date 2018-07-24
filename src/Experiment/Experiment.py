@@ -6,7 +6,7 @@ class Experiment:
         self.id = Experiment.id
         Experiment.id += 1
         self.setting = setting
-        self.controller = setting.con_class(setting)
+        self.controller = setting.con_type(setting)
 
     def run(self):
         self.controller.run()

@@ -17,13 +17,8 @@ class SynByzEnvironment:
     def get_id(self, sk):
         return self.controller.node_id[sk]
 
-<<<<<<< HEAD
     def get_input(self, node):
         return self.controller.input[node]
-=======
-    def get_input(self, sk):
-        return self.controller.input
->>>>>>> 7a1ca05d6a6fdee0570ebb4de48d0a256ef8ed7d
 
     def get_input_msgs(self, sk):
         return self.controller.get_message_buffer(sk)

@@ -52,7 +52,6 @@ class SynchronousByzantine:
             print("n : %d" % self.n)
             print("input : %d" % self.input)
         print("")
-<<<<<<< HEAD
         print("Parameters:")
         print("n : %d" % self.n)
         print("input : %d" % self.input)
@@ -129,5 +128,3 @@ class AsynchronousByzantine:
             print("num of corruptions : %d" % tf)
             print("sender corrupted : %s" % str(self.corrupt_sender))
 
-=======
->>>>>>> 7a1ca05d6a6fdee0570ebb4de48d0a256ef8ed7d
