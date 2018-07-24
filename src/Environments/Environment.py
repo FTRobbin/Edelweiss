@@ -9,7 +9,7 @@ class SynByzEnvironment:
         return self.controller.n
 
     def get_f(self):
-        return self.controller.tf
+        return self.controller.f
 
     def get_round(self):
         return self.controller.round
@@ -18,7 +18,7 @@ class SynByzEnvironment:
         return self.controller.node_id[node]
 
     def get_input(self, node):
-        return self.controller.input
+        return self.controller.input[node]
 
     def get_input_msgs(self, node):
         return self.controller.get_message_buffer(node)
