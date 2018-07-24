@@ -12,9 +12,16 @@ class Experiment:
         self.controller.run()
 
     def report(self):
-        print("Experiment #%d" % self.id)
+        print("Experiment Setting:")
         self.setting.report()
+        print("")
+        print("Experiment Result:")
         self.controller.report()
+        print("")
+        if len(self.setting.measure) > 0:
+            print("Measurements:")
+            for m in self.setting.measure:
+                m.measure(self.controller)
 
     def run_and_report(self):
         self.run()
