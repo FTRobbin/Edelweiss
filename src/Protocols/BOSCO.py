@@ -19,7 +19,8 @@ class BOSCO:
             msgs = self.env.get_input_msgs(self)
             if(len(msgs)>self.env.get_n()-self.env.get_f()):
                 rand_start=random.randint(0,self.env.get_f())
-                msgs=msgs[rand_start:rand_start+self.env.get_n()-self.env.get_f()]
+                # rand_start=self.env.get_f()
+                msgs=random.sample(msgs,self.env.get_n()-self.env.get_f())
             d = {}
             for msg in msgs:
                 key = msg.get_extraction()
