@@ -6,10 +6,10 @@ class DolevStrong:
     name = "Dolev-Strong Protocol"
     SENDER = 0
 
-    def __init__(self, env, pki, sk):
+    def __init__(self, env, pki):
         self.env = env
         self.pki = pki
-        self.sk = sk
+        self.pki.register(self)
         self.input = None
         self.seen = [False, False]
 
@@ -32,24 +32,24 @@ class DolevStrong:
 
     def run_node(self):
         round = self.env.get_round()
-        myid = self.env.get_id(self.sk)
+        myid = self.env.get_id(self)
         if round == 0:
-            if myid == DolevStrong.SENDER:
-                self.input = self.env.get_input(self.sk)
-                self.env.put_broadcast(self.sk, self.pki.sign(self.sk, Message(myid, self.input)))
+            if self.env.get_id(self) == DolevStrong.SENDER:
+                self.input = self.env.get_input(self)
+                self.env.put_broadcast(self, self.pki.sign(self, Message(myid, self.input)))
                 self.seen[self.input] = True
         elif 1 <= round <= self.env.get_f() + 1:
-            msgs = self.env.get_input_msgs(self.sk)
+            msgs = self.env.get_input_msgs(self)
             for msg in msgs:
                 if self.pki.verify(msg) and self.my_verify(round, msg):
                     b = msg.get_extraction()
                     if (b == 0 or b == 1) and not self.seen[b]:
                         self.seen[b] = True
-                        self.env.put_broadcast(self.sk, self.pki.sign(self.sk, Message(myid, msg)))
+                        self.env.put_broadcast(self, self.pki.sign(self, Message(myid, msg)))
             if round == self.env.get_f() + 1:
                 if self.seen[1] and not self.seen[0]:
-                    self.env.put_output(self.sk, 1)
+                    self.env.put_output(self, 1)
                 else:
-                    self.env.put_output(self.sk, 0)
+                    self.env.put_output(self, 0)
         else:
             raise RuntimeError

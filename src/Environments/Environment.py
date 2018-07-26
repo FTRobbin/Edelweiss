@@ -11,6 +11,9 @@ class SynByzEnvironment:
     def get_f(self):
         return self.controller.f
 
+    def get_tf(self):
+        return self.controller.tf
+
     def get_round(self):
         return self.controller.round
 
@@ -18,8 +21,11 @@ class SynByzEnvironment:
         return self.controller.node_id[sk]
 
     def get_input(self, node):
-        return self.controller.input[node]
-
+        if type(self.controller.input) is list:
+            return self.controller.input[node]
+        else:
+            return self.controller.input
+        
     def get_input_msgs(self, sk):
         return self.controller.get_message_buffer(sk)
 

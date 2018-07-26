@@ -14,7 +14,12 @@ from Measures.ByzantineMeasures import *
 # exp = Experiment(setting)
 # exp.run()
 # exp.report()
-setting = SynchronousByzantineWithoutSender(n=6,f=1,input=[1]*6, protocol=BOSCO, measure=[ByzValidityWithoutSender, ByzConsistency,ByzUnanimity])
+OptionalControllers = [SynByzController, SynByzControllerWithoutSender, SynByzControllerCentroliezedAdversary]
+OptionalAdversaries = [CrashAdversary, HalfHalfSenderAdversary,
+                       SynBOSCOValidityAttacker, SynBOSCOValidityCentrolizedAttacker]
+setting = SynchronousByzantineWithoutSender(10, [1, 1, 1, 1, 0, 0, 0, 1, 1, 1], OptionalAdversaries[1],
+                                            OptionalControllers[1], f=3, tf=4, protocol=BOSCO,
+                                            measure=[ByzValidityWithoutSender, ByzConsistency, ByzUnanimity])
 exp = Experiment(setting)
 exp.run()
 exp.report()
