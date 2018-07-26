@@ -24,7 +24,8 @@ class Experiment:
             for m in self.setting.measure:
                 flag = not m.measure(self.controller) or flag
             if flag == 0:
-                print("\033[1;32mCongrats! All properties are satisified! \033[0m")
+                print(
+                    "\033[1;32mCongrats! All properties are satisified! \033[0m")
             else:
                 print("\033[1;31mOops! Some properties are violated! \033[0m")
 

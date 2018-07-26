@@ -1,7 +1,8 @@
-from Controllers.Controller import *
+from Controllers.SynByzController import *
+from Controllers.SynByzControllerWithoutSender import *
 from Environments.Environment import *
 from Oracles.PKI import *
-from Adversaries.Adversary import *
+from Adversaries import *
 
 
 class ExperimentSetting:
@@ -11,7 +12,7 @@ class ExperimentSetting:
 
 
 class SynchronousByzantine:
-    def __init__(self, n, input, f=0, corflag=False, protocol=None, measure=[]):
+    def __init__(self, n, input, f=0, corflag=False, protocol=None, measure=[], centralized=False, centralized_adversary=None):
         self.n = n
         self.input = input
         self.f = f
@@ -22,9 +23,12 @@ class SynchronousByzantine:
         self.pki_type = IdealPKI
         self.protocol = protocol
         self.measure = measure
+        self.centralized = centralized
+        self.centralized_adversary = centralized_adversary
 
     def clone(self):
-        ret = SynchronousByzantine(self.n, self.input, self.f, self.corrupt_sender, self.protocol, self.measure)
+        ret = SynchronousByzantine(
+            self.n, self.input, self.f, self.corrupt_sender, self.protocol, self.measure)
         ret.adversary = self.adversary
         return ret
 
@@ -49,7 +53,8 @@ class SynchronousByzantine:
 class SynchronousByzantineWithoutSender:
     def __init__(self, n, input, adversary, controller,
                  f=0, tf=0,
-                 protocol=None, measure=[]):
+                 protocol=None, measure=[],
+                 centralized=False, centralized_adversary=None):
         self.n = n
         self.input = input
         self.f = f
@@ -60,9 +65,12 @@ class SynchronousByzantineWithoutSender:
         self.pki_type = IdealPKI
         self.protocol = protocol
         self.measure = measure
+        self.centralized = centralized
+        self.centralized_adversary = centralized_adversary
 
     def clone(self):
-        ret = SynchronousByzantine(self.n, self.input, self.f, self.corrupt_sender, self.protocol, self.measure)
+        ret = SynchronousByzantine(
+            self.n, self.input, self.f, self.corrupt_sender, self.protocol, self.measure)
         ret.adversary = self.adversary
         return ret
 

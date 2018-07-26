@@ -33,7 +33,7 @@ middle and final results of the running of the protocol and get to understand th
 ## download
 
 ```sh
-git clone git@github.com:Coding/WebIDE.git
+git clone git@github.com:FTRobbin/Edelweiss.git
 ```
 
 ## Run an experiment

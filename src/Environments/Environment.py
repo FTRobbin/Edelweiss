@@ -25,7 +25,7 @@ class SynByzEnvironment:
             return self.controller.input[node]
         else:
             return self.controller.input
-        
+
     def get_input_msgs(self, sk):
         return self.controller.get_message_buffer(sk)
 
