@@ -51,6 +51,8 @@ class ByzUnanimity:
     
     @staticmethod
     def measure(con):
+        if type(con.input) is not list:
+            con.input = [con.input]
         if len(set(con.input)) == 0:
             raise RuntimeError
         if len(set(con.input)) == 1:
