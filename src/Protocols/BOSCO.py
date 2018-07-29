@@ -10,7 +10,7 @@ class BOSCO:
         self.pki = pki
         self.pki.register(self)
         self.input = None
-
+    
     def run_node(self):
         round = self.env.get_round()
         myid = self.env.get_id(self)
@@ -28,6 +28,8 @@ class BOSCO:
                 msgs = self.env.get_input_msgs(self)
                 d = {}
                 for msg in msgs:
+                    if(not self.pki.verify(msg)):
+                        raise RuntimeError
                     key = msg.get_extraction()
                     if key not in d:
                         d[key] = 0

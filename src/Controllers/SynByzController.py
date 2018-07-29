@@ -1,6 +1,6 @@
 
 class SynByzController:
-    name = "Synchronous Byzantine Controller without sender"
+    name = "Synchronous Byzantine Controller"
 
     def __init__(self, setting):
         self.n = setting.n
@@ -28,7 +28,7 @@ class SynByzController:
             if self.corf:
                 self.f -= 1
         for i in range(self.n):
-            if self.is_corrupt(i):
+            if self.is_corrupt(i) and not setting.centralized:
                 self.node_id[setting.adversary(self.env, self.pki)] = i
             else:
                 self.node_id[setting.protocol(self.env, self.pki)] = i
@@ -40,7 +40,7 @@ class SynByzController:
         if self.has_sender:
             return self.corf and id == 0 or id + self.f >= self.n
         else:
-            return id < self.tf
+            return id + self.tf >= self.n
 
     def is_completed(self):
         return len({k: v for k, v in self.output.items() if not self.is_corrupt(k)}) == self.n - self.tf
@@ -71,7 +71,7 @@ class SynByzController:
         for r in range(1, self.round + 1):
             print("Round %d : " % r)
             d = {}
-            for packet in self.message_history[r]:
+            for packet in sorted(self.message_history[r],key=lambda x: x[1].get_sender()):
                 print("From %d to %d content %s " %
                       (packet[1].get_sender(), packet[0], packet[1].get_extraction()))
                 key = (packet[0], packet[1].get_extraction())

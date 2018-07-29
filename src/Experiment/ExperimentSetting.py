@@ -17,6 +17,7 @@ class SynchronousByzantine:
                  protocol=None, measure=[],
                  centralized=False, centralized_adversary=None,
                  has_sender=False, corrupt_sender=False):
+        self.experiment_type = "Synchronous Byzantine"
         self.n = n
         self.input = input
         self.f = f

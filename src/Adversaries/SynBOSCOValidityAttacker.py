@@ -16,11 +16,11 @@ class SynBOSCOValidityAttacker:
         myid = self.env.get_id(self)
         self.attack_value = self.env.get_input(myid)
         if round == 0:
-            for i in range(0, 2 * self.env.get_f() + 1):
+            for i in range(0, self.env.get_f()):
                 self.env.put_packet(self, self.pki.sign(
                     self, Message(myid, self.attack_value)), i)
-                self.env.put_packet(self, Message(myid, self.attack_value), i)
-            for i in range(2*self.env.get_f() + 1, self.env.get_n()):
+                # self.env.put_packet(self, Message(myid, self.attack_value), i)
+            for i in range(self.env.get_f(), self.env.get_n()):
                 self.env.put_packet(self, self.pki.sign(
                     self, Message(myid, 1 - self.attack_value)), i)
         else:

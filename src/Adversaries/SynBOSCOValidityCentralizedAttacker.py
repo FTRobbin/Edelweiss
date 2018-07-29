@@ -25,10 +25,10 @@ class SynBOSCOValidityCentralizedAttacker:
                     if node.env.get_id(node) == j:
                         chameleon = node  # chameleon is used to pretend the corrupt node
                         break
-                for i in range(0, 2 * self.env.get_f() + 1):
+                for i in range(0, self.env.get_f() ):
                     self.env.put_packet(self, self.pki.sign(
                         chameleon, Message(j, self.attack_value)), i)
-                for i in range(2 * self.env.get_f() + 1, self.env.get_n()):
+                for i in range(self.env.get_f() , self.env.get_n()):
                     self.env.put_packet(self, self.pki.sign(
                         chameleon, Message(j, 1 - self.attack_value)), i)
         else:
