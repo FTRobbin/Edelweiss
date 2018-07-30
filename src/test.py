@@ -21,7 +21,7 @@ from Adversaries.SynBOSCOValidityCentralizedAttacker import *
 PossibleControllers = [SynByzController]
 PossibleAdversaries = [CrashAdversary, HalfHalfSenderAdversary,
                        SynBOSCOValidityAttacker, SynBOSCOValidityCentralizedAttacker]
-SettingNumToNameDict = {'1': "NaiveVoting", '2': "DecentralizedBosco", '3': "DicentralizedBoscValidityAttack", '4': "CentralizedBosco",
+SettingNumToNameDict = {'1': "NaiveVoting", '2': "DecentralizedBosco", '3': "DecentralizedBoscoValidityAttack", '4': "CentralizedBosco",
                         '5': "CentralizedBoscoValidityAttack", '6': "DolevStrong"}
 SettingDict = {"NaiveVoting": SynchronousByzantine(10, 1, PossibleAdversaries[2],
                                                    PossibleControllers[0], f=0, tf=0, protocol=NaiveVoting,
@@ -35,7 +35,7 @@ SettingDict = {"NaiveVoting": SynchronousByzantine(10, 1, PossibleAdversaries[2]
                                                           measure=[ByzValidity,
                                                                    ByzConsistency, ByzUnanimity],
                                                           centralized=False, centralized_adversary=PossibleAdversaries[3]),
-               "DicentralizedBoscValidityAttack": SynchronousByzantine(10, [1, 1, 1, 0, 0, 0, 1, 1, 1, 1], PossibleAdversaries[2],
+               "DecentralizedBoscoValidityAttack": SynchronousByzantine(10, [1, 1, 1, 0, 0, 0, 1, 1, 1, 1], PossibleAdversaries[2],
                                                                        PossibleControllers[0], f=3, tf=4, protocol=BOSCO,
                                                                        measure=[ByzValidity,
                                                                                 ByzConsistency, ByzUnanimity],
@@ -91,13 +91,13 @@ def test(settings):
             print("%s test failed" % name)
             continue
         cnt += 1
-        print('Tests %s passed!' % name)
+        print('Test %s passed!' % name)
     if(cnt == len(settings)):
         print('All tests passed! (%(numerator)d/%(denumerator)d)' %
               {'numerator': cnt, "denumerator": cnt})
     else:
-        print('Some tests failer! (%(numerator)d/%(denumerator)d)' %
-              {'numerator': len(settings)-cnt, "denumerator": len(settings)})
+        print('Some test(s) failed! (%(numerator)d/%(denumerator)d)' %
+              {'numerator': cnt, "denumerator": len(settings)})
 
 
 def main():
