@@ -1,5 +1,3 @@
-import jsonpickle
-
 from Experiment.ExperimentSetting import *
 from Experiment.Experiment import *
 from Protocols.NaiveVoting import *
@@ -12,8 +10,7 @@ from Controllers.SynByzController import *
 from Adversaries.HalfHalfSenderAdversary import *
 from Adversaries.SynBOSCOValidityAttacker import *
 from Adversaries.SynBOSCOValidityCentralizedAttacker import *
-from Test.Util import *
-# from Test1.ExpResult import *
+from Test.Report import *
 
 PossibleControllers = [SynByzController]
 PossibleAdversaries = [CrashAdversary, HalfHalfSenderAdversary,
@@ -45,8 +42,8 @@ PossibleAdversaries = [CrashAdversary, HalfHalfSenderAdversary,
 # jsonfile[res[0]] = res[1]
 # serialized = jsonpickle.encode(jsonfile)
 # print (serialized)
-generate_benchmark()
-test()
+# generate_benchmark()
+# Report()
 # exp.report()
 # exp.run_and_report()
 # setting2 = SynchronousByzantine(10, 1, PossibleAdversaries[2],

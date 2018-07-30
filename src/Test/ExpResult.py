@@ -57,3 +57,5 @@ class ExpResult():
         # hashlib.sha256((arg.encode('utf-8'))).hexdigest()
         # m.update(arg)
         return hashlib.sha256((arg.encode('utf-8'))).hexdigest()
+    def print(self):
+        print()
