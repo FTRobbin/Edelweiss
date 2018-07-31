@@ -105,7 +105,7 @@ def main():
         opts, args = getopt.getopt(sys.argv[1:], "hi:g", ["help", "input="])
     except getopt.GetoptError as err:
         # print help information and exit:
-        print (str(err))  # will print something like "option -a not recognized"
+        print(str(err))  # will print something like "option -a not recognized"
         usage()
         sys.exit(2)
     output = None
@@ -141,10 +141,10 @@ def main():
 
 
 def usage():
-    print ("Usage: [options]")
-    print ("-h               Display help information")
-    print ("-i input list    test cases to be execuated")
-    print ("-g               generate benchmark")
+    print("Usage: [options]")
+    print("-h               Display help information")
+    print("-i input list    test cases to be execuated")
+    print("-g               generate benchmark")
 
 
 if __name__ == "__main__":

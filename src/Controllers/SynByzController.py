@@ -1,3 +1,4 @@
+from Util.Util import *
 
 class SynByzController:
     name = "Synchronous Byzantine Controller"
@@ -51,7 +52,7 @@ class SynByzController:
             self.message_buffer[packet[0]].append(packet[1])
         self.message_history.append(self.message_pool)
         self.message_pool = []
-        for node in self.node_id.keys():
+        for node in sorted(self.node_id.keys(),key=lambda x:x.env.get_id(x)):
             if self.centralized and self.is_corrupt(self.node_id[node]):
                 self.centralized_adversary.run_node()
             else:
@@ -73,15 +74,15 @@ class SynByzController:
             d = {}
             for packet in sorted(self.message_history[r],key=lambda x: x[1].get_sender()):
                 print("From %d to %d content %s " %
-                      (packet[1].get_sender(), packet[0], packet[1].get_extraction()))
-                key = (packet[0], packet[1].get_extraction())
+                      (packet[1].get_sender(), packet[0], ListToString(packet[1].get_extraction())))
+                key = (packet[0], ListToString(packet[1].get_extraction()))
                 if key not in d:
                     d[key] = 0
                 d[key] = d[key] + 1
             print(" ")
             print("Summary :")
             for k in sorted(d):
-                print("Receiver %d receive %d for %d times " %
+                print("Receiver %d receive %s for %d times " %
                       (k[0], k[1], d[k]))
 
         print(" ")

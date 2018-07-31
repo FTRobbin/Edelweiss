@@ -1,6 +1,6 @@
 class Message:
 
-    def __init__(self, sender, content, receiver=None, round=None, iden=None):
+    def __init__(self, sender, content, round=None, receiver=None, iden=None):
         self.sender = sender
         self.content = content
         self.round = round
@@ -9,9 +9,9 @@ class Message:
 
     def clone(self):
         if type(self.content) is Message:
-            return Message(self.sender, self.content.clone(), self.receiver, self.round, self.iden)
+            return Message(self.sender, self.content.clone(),self.round, self.receiver, self.iden)
         else:
-            return Message(self.sender, self.content, self.receiver, self.round, self.iden)
+            return Message(self.sender, self.content, self.round, self.receiver, self.iden)
 
     def get_chain(self):
         if type(self.content) is Message:

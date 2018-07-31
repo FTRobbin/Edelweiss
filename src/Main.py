@@ -3,6 +3,7 @@ from Experiment.Experiment import *
 from Protocols.NaiveVoting import *
 from Protocols.BOSCO import *
 from Protocols.DolevStrong import *
+from Protocols.Herding import *
 from Measures.ByzantineMeasures import *
 from Adversaries.CrashAdversary import *
 from Controllers.SynByzController import *
@@ -53,3 +54,10 @@ PossibleAdversaries = [CrashAdversary, HalfHalfSenderAdversary,
 #                                             has_sender=True,corrupt_sender=False)
 # exp2 = Experiment(setting2)
 # exp2.run_and_report()
+setting = SynchronousByzantine(10, [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], PossibleAdversaries[3],
+                               PossibleControllers[0], f=0, tf=0, protocol=Herding,
+                               measure=[ByzValidity,
+                                        ByzConsistency, ByzUnanimity],
+                               centralized=False, centralized_adversary=PossibleAdversaries[3])
+exp = Experiment(setting)
+exp.run_and_report()

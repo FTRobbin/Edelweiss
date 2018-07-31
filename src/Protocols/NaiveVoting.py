@@ -17,13 +17,15 @@ class NaiveVoting:
         if round == 0:
             if self.env.get_id(self) == NaiveVoting.SENDER:
                 self.input = self.env.get_input(self)
-                self.env.put_broadcast(self, self.pki.sign(self, Message(myid, self.input)))
+                self.env.put_broadcast(self, self.pki.sign(
+                    self, Message(myid, self.input)))
         elif round == 1:
             msgs = self.env.get_input_msgs(self)
             for msg in msgs:
                 if self.pki.verify(msg) and msg.get_sender() == NaiveVoting.SENDER and (
                         msg.get_extraction() == 0 or msg.get_extraction() == 1):
-                    self.env.put_broadcast(self, self.pki.sign(self, Message(myid, msg)))
+                    self.env.put_broadcast(
+                        self, self.pki.sign(self, Message(myid, msg)))
         elif round == 2:
             msgs = self.env.get_input_msgs(self)
             seen = set()

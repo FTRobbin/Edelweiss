@@ -37,3 +37,4 @@ class SynByzEnvironment:
 
     def put_output(self, sk, output):
         self.controller.put_output(sk, output)
+
