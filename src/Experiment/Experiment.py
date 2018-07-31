@@ -17,7 +17,7 @@ class Experiment:
         self.setting.report()
         print("")
         print("Experiment Result:")
-        self.controller.report_message()
+        self.controller.report()
         print("")
         flag = 0
         if len(self.setting.measure) > 0:

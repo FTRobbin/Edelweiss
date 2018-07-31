@@ -54,7 +54,7 @@ PossibleAdversaries = [CrashAdversary, HalfHalfSenderAdversary,
 #                                             has_sender=True,corrupt_sender=False)
 # exp2 = Experiment(setting2)
 # exp2.run_and_report()
-setting = SynchronousByzantine(10, [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], PossibleAdversaries[3],
+setting = SynchronousByzantine(10, [0, 0, 0, 0, 0, 1, 1, 1, 1, 1], PossibleAdversaries[3],
                                PossibleControllers[0], f=0, tf=0, protocol=Herding,
                                measure=[ByzValidity,
                                         ByzConsistency, ByzUnanimity],

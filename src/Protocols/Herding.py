@@ -6,7 +6,7 @@ class Herding:
 
     name = "Herding Protocol"
 
-    def __init__(self, env, pki, _lambda=2):
+    def __init__(self, env, pki, _lambda=10):
         self.env = env
         self.pki = pki
         self.pki.register(self)
@@ -15,13 +15,10 @@ class Herding:
         self.zero_bucket = []
         self.one_bucket = []
         self.belief = None
-        self.bar = self._lambda*self._lambda
+        self.bar = random.randint(1, 10) * self._lambda*self._lambda
 
     def POW(self, round, id, belief):
         return random.randint(1, self._lambda) == 1
-
-    def POW_verify(self, round, id, belief, res):
-        return True
 
     def bucket_verify(self, bucket):
         sender_round_set = []
@@ -60,7 +57,8 @@ class Herding:
                     raise RuntimeError
                 bucket = msg.get_extraction()
                 if not bool(bucket):
-                    raise RuntimeError
+                    # raise RuntimeError
+                    return
                 if self.bucket_verify(bucket):
                     if bucket[0].belief == 0:
                         zero_bucket_list.append(bucket)
@@ -71,10 +69,10 @@ class Herding:
                 new_block = Block(round, myid, self.belief)
                 if self.belief == 0:
                     self.zero_bucket.append(new_block)
-                    zero_bucket_list.append(self.zero_bucket)
+                    zero_bucket_list.append(self.zero_bucket.copy())
                 elif self.belief == 1:
                     self.one_bucket.append(new_block)
-                    one_bucket_list.append(self.zero_bucket)
+                    one_bucket_list.append(self.one_bucket.copy())
             if(zero_bucket_list):
                 self.zero_bucket = sorted(
                     zero_bucket_list, key=lambda x: len(x), reverse=True)[0]
@@ -124,4 +122,4 @@ class Block:
         return True
 
     def __str__(self):
-        return str(self.round) + str(self.id) + str(self.belief)
+        return str(self.round) + '-' + str(self.id) + '-' + str(self.belief)
