@@ -79,6 +79,7 @@ class Herding:
             if(one_bucket_list):
                 self.one_bucket = sorted(
                     one_bucket_list, key=lambda x: len(x), reverse=True)[0]
+            '''
             if my_pow:
                 if(len(self.zero_bucket) > len(self.one_bucket)):
                     self.belief = 0
@@ -107,7 +108,18 @@ class Herding:
                         self.belief = 0
                     else:
                         self.belief = 1
-
+            '''
+            l0 = len(self.zero_bucket)
+            l1 = len(self.one_bucket)
+            if l0 > l1 or (l0 == l1) and random.choice([True, False]):
+                self.belief = 0
+                my_bucket = self.zero_bucket.copy()
+            else:
+                self.belief = 1
+                my_bucket = self.one_bucket.copy()
+            if my_pow:
+                self.env.put_broadcast(self, self.pki.sign(
+                    self, Message(myid, my_bucket, round)))
         else:
             self.env.put_output(self, self.belief)
 
