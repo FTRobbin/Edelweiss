@@ -17,13 +17,13 @@ PossibleControllers = [SynByzController]
 PossibleAdversaries = [CrashAdversary, HalfHalfSenderAdversary,
                        SynBOSCOValidityAttacker, SynBOSCOValidityCentralizedAttacker]
 # setting = SynchronousByzantine(10, 1, PossibleAdversaries[2],
-#                                PossibleControllers[1], f=0, tf=0, protocol=NaiveVoting,
+#                                PossibleControllers[0], f=0, tf=0, protocol=NaiveVoting,
 #                                measure=[ByzValidity,
 #                                         ByzConsistency, ByzUnanimity],
 #                                centralized=True, centralized_adversary=PossibleAdversaries[3],
 #                                has_sender=True, corrupt_sender=False)
 # exp = Experiment(setting)
-# exp.run()
+# exp.run_and_report()
 # jsonfile = {}
 # res = exp.save_output()
 # jsonfile[res[0]]=res[1]
@@ -34,7 +34,7 @@ PossibleAdversaries = [CrashAdversary, HalfHalfSenderAdversary,
 # exp.report()
 
 # setting = SynchronousByzantine(10, [1, 1, 1, 0, 0, 0, 1, 1, 1, 1], PossibleAdversaries[3],
-#                                             PossibleControllers[0], f=3, tf=3, protocol=BOSCO,
+#                                             PossibleControllers[0], f=3, protocol=BOSCO, tf=4,
 #                                             measure=[ByzValidity, ByzConsistency, ByzUnanimity],
 #                                             centralized=True, centralized_adversary=PossibleAdversaries[3])
 # exp = Experiment(setting)
@@ -47,17 +47,17 @@ PossibleAdversaries = [CrashAdversary, HalfHalfSenderAdversary,
 # Report()
 # exp.report()
 # exp.run_and_report()
-# setting2 = SynchronousByzantine(10, 1, PossibleAdversaries[2],
-#                                             PossibleControllers[1], f=0, tf=0,protocol=DolevStrong,
-#                                             measure=[ByzValidity, ByzConsistency,ByzUnanimity],
-#                                             centralized=False, centralized_adversary=PossibleAdversaries[3],
-#                                             has_sender=True,corrupt_sender=False)
-# exp2 = Experiment(setting2)
-# exp2.run_and_report()
-setting = SynchronousByzantine(10, [0, 0, 0, 0, 0, 1, 1, 1, 1, 1], PossibleAdversaries[3],
-                               PossibleControllers[0], f=0, tf=0, protocol=Herding,
-                               measure=[ByzValidity,
-                                        ByzConsistency, ByzUnanimity],
-                               centralized=False, centralized_adversary=PossibleAdversaries[3])
-exp = Experiment(setting)
-exp.run_and_report()
+setting2 = SynchronousByzantine(10, 1, PossibleAdversaries[2],
+                                            PossibleControllers[0], f=0, tf=0,protocol=DolevStrong,
+                                            measure=[ByzValidity, ByzConsistency,ByzUnanimity],
+                                            centralized=False, centralized_adversary=PossibleAdversaries[3],
+                                            has_sender=True,corrupt_sender=False)
+exp2 = Experiment(setting2)
+exp2.run_and_report()
+# setting = SynchronousByzantine(5, [1, 0,0,1,1], PossibleAdversaries[3],
+#                                PossibleControllers[0], f=0, tf=0, protocol=Herding,
+#                                measure=[ByzValidity,
+#                                         ByzConsistency, ByzUnanimity],
+#                                centralized=False, centralized_adversary=PossibleAdversaries[3],seed=None,_lambda=3)
+# exp = Experiment(setting)
+# exp.run_and_report()

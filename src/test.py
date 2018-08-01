@@ -10,6 +10,7 @@ from Experiment.Experiment import *
 from Protocols.NaiveVoting import *
 from Protocols.BOSCO import *
 from Protocols.DolevStrong import *
+from Protocols.Herding import *
 from Measures.ByzantineMeasures import *
 from Adversaries.CrashAdversary import *
 from Controllers.SynByzController import *
@@ -22,7 +23,7 @@ PossibleControllers = [SynByzController]
 PossibleAdversaries = [CrashAdversary, HalfHalfSenderAdversary,
                        SynBOSCOValidityAttacker, SynBOSCOValidityCentralizedAttacker]
 SettingNumToNameDict = {'1': "NaiveVoting", '2': "DecentralizedBosco", '3': "DecentralizedBoscoValidityAttack", '4': "CentralizedBosco",
-                        '5': "CentralizedBoscoValidityAttack", '6': "DolevStrong"}
+                        '5': "CentralizedBoscoValidityAttack", '6': "DolevStrong",'7':"Herding"}
 SettingDict = {"NaiveVoting": SynchronousByzantine(10, 1, PossibleAdversaries[2],
                                                    PossibleControllers[0], f=0, tf=0, protocol=NaiveVoting,
                                                    measure=[ByzValidity,
@@ -36,10 +37,10 @@ SettingDict = {"NaiveVoting": SynchronousByzantine(10, 1, PossibleAdversaries[2]
                                                                    ByzConsistency, ByzUnanimity],
                                                           centralized=False, centralized_adversary=PossibleAdversaries[3]),
                "DecentralizedBoscoValidityAttack": SynchronousByzantine(10, [1, 1, 1, 0, 0, 0, 1, 1, 1, 1], PossibleAdversaries[2],
-                                                                       PossibleControllers[0], f=3, tf=4, protocol=BOSCO,
-                                                                       measure=[ByzValidity,
-                                                                                ByzConsistency, ByzUnanimity],
-                                                                       centralized=False, centralized_adversary=PossibleAdversaries[3]),
+                                                                        PossibleControllers[0], f=3, tf=4, protocol=BOSCO,
+                                                                        measure=[ByzValidity,
+                                                                                 ByzConsistency, ByzUnanimity],
+                                                                        centralized=False, centralized_adversary=PossibleAdversaries[3]),
                "CentralizedBosco": SynchronousByzantine(10, [1, 1, 1, 0, 0, 0, 1, 1, 1, 1], PossibleAdversaries[3],
                                                         PossibleControllers[0], f=3, tf=3, protocol=BOSCO,
                                                         measure=[ByzValidity,
@@ -56,7 +57,13 @@ SettingDict = {"NaiveVoting": SynchronousByzantine(10, 1, PossibleAdversaries[2]
                                                             ByzConsistency, ByzUnanimity],
                                                    centralized=False, centralized_adversary=PossibleAdversaries[
                                                        3],
-                                                   has_sender=True, corrupt_sender=False)}
+                                                   has_sender=True, corrupt_sender=False),
+               "Herding": SynchronousByzantine(5, [1, 0, 0, 1, 1], PossibleAdversaries[3],
+                                                         PossibleControllers[0], f=0, tf=0, protocol=Herding,
+                                                         measure=[ByzValidity,
+                                                                  ByzConsistency, ByzUnanimity],
+                                                         centralized=False, centralized_adversary=PossibleAdversaries[3], seed=0, _lambda=3)
+               }
 
 
 def generate_benchmark():
@@ -85,10 +92,10 @@ def test(settings):
             raise RuntimeError
         current_data = data[res[0]]
         if not operator.eq(current_data.round_history, res[1].round_history):
-            print("%s test failed" % name)
+            print("%s test failed on round_history" % name)
             continue
         if not operator.eq(current_data.output, res[1].output):
-            print("%s test failed" % name)
+            print("%s test failed on output" % name)
             continue
         cnt += 1
         print('Test %s passed!' % name)

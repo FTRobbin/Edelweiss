@@ -5,9 +5,9 @@ class BOSCO:
 
     name = "BOSCO Protocol"
 
-    def __init__(self, env, pki):
-        self.env = env
-        self.pki = pki
+    def __init__(self, **kargs):
+        self.env = kargs["env"]
+        self.pki = kargs["pki"]
         self.pki.register(self)
         self.input = None
     

@@ -1,29 +1,38 @@
-from Messages.Message import Message
 import random
+
+from Messages.Message import Message
 
 
 class Herding:
-
     name = "Herding Protocol"
 
-    def __init__(self, env, pki, _lambda=10):
-        self.env = env
-        self.pki = pki
+    def __init__(self, **kargs):
+
+        self.env = kargs["env"]
+        self.pki = kargs["pki"]
         self.pki.register(self)
         self.input = None
-        self._lambda = _lambda
-        self.zero_bucket = []
-        self.one_bucket = []
+        self._lambda = kargs["lambda"]
+        self.buckets = [[], []]
         self.belief = None
-        self.bar = random.randint(1, 10) * self._lambda*self._lambda
-
-    def POW(self, round, id, belief):
-        return random.randint(1, self._lambda) == 1
+        self.bar = 1 * self._lambda * self._lambda
+        self.my_mine = kargs["mine"]
 
     def bucket_verify(self, bucket):
         sender_round_set = []
+        belief = -1
+        round = -1
         for block in bucket:
-            if not block.verify():
+            if belief == -1:
+                belief = block.belief
+            elif belief != block.belief:
+                return False
+            if block.round <= round:
+                return False
+            round = block.round
+            if not self.pki.verify(block):
+                return False
+            if not self.my_mine.verify(block.round, block.id, block.belief):
                 return False
             if (block.round, block.id) in sender_round_set:
                 return False
@@ -35,93 +44,44 @@ class Herding:
         myid = self.env.get_id(self)
         if round == 0:
             self.belief = self.env.get_input(myid)
-            my_pow = self.POW(round, myid, self.belief)
-            if my_pow:
-                new_block = Block(round, myid, self.belief)
-                if self.belief == 0:
-                    self.zero_bucket.append(new_block)
-                    self.env.put_broadcast(self, self.pki.sign(
-                        self, Message(myid, self.zero_bucket.copy(), round)))
-                elif self.belief == 1:
-                    self.one_bucket.append(new_block)
-                    self.env.put_broadcast(self, self.pki.sign(
-                        self, Message(myid, self.one_bucket.copy(), round)))
-
-        elif round <= self.bar:  # < or <=?
+            pass
+        elif round <= self.bar:
             msgs = self.env.get_input_msgs(self)
-            zero_bucket_list = []
-            one_bucket_list = []
+            bucket_lists = [[], []]
             for msg in msgs:
-                if(not self.pki.verify(msg)):
+                if (not self.pki.verify(msg)):
                     self.pki.verify(msg)
                     raise RuntimeError
                 bucket = msg.get_extraction()
                 if not bool(bucket):
-                    # raise RuntimeError
                     return
                 if self.bucket_verify(bucket):
-                    if bucket[0].belief == 0:
-                        zero_bucket_list.append(bucket)
-                    else:
-                        one_bucket_list.append(bucket)
-            my_pow = self.POW(round, myid, self.belief)
-            if my_pow:
-                new_block = Block(round, myid, self.belief)
-                if self.belief == 0:
-                    self.zero_bucket.append(new_block)
-                    zero_bucket_list.append(self.zero_bucket.copy())
-                elif self.belief == 1:
-                    self.one_bucket.append(new_block)
-                    one_bucket_list.append(self.one_bucket.copy())
-            if(zero_bucket_list):
-                self.zero_bucket = sorted(
-                    zero_bucket_list, key=lambda x: len(x), reverse=True)[0]
-            if(one_bucket_list):
-                self.one_bucket = sorted(
-                    one_bucket_list, key=lambda x: len(x), reverse=True)[0]
-            '''
-            if my_pow:
-                if(len(self.zero_bucket) > len(self.one_bucket)):
+                    bucket_lists[bucket[0].belief].append(bucket.copy())
+            i = 0
+            for bucket_list in bucket_lists:
+                if bucket_list:
+                    self.buckets[i] = max(bucket_list, key=lambda x: len(x))
+                i += 1
+            l0 = len(self.buckets[0])
+            l1 = len(self.buckets[1])
+            # print("round %d : id %d belief %d" % (round + 1, myid, self.belief))
+            if round != 1:
+                if l0 > l1 or (l0 == l1) and random.choice([True, False]):
                     self.belief = 0
-                    self.env.put_broadcast(self, self.pki.sign(
-                        self, Message(myid, self.zero_bucket.copy(), round)))
-                elif(len(self.zero_bucket) < len(self.one_bucket)):
-                    self.belief = 1
-                    self.env.put_broadcast(self, self.pki.sign(
-                        self, Message(myid, self.one_bucket.copy(), round)))
+                    # print("round %d : id %d belief 0" % (round + 1, myid))
                 else:
-                    if random.randint(0, 1) == 0:
-                        self.belief = 0
-                        self.env.put_broadcast(self, self.pki.sign(
-                            self, Message(myid, self.zero_bucket.copy(), round)))
-                    else:
-                        self.belief = 1
-                        self.env.put_broadcast(self, self.pki.sign(
-                            self, Message(myid, self.one_bucket.copy(), round)))
-            else:
-                if (len(self.zero_bucket) > len(self.one_bucket)):
-                    self.belief = 0
-                elif (len(self.zero_bucket) < len(self.one_bucket)):
                     self.belief = 1
-                else:
-                    if random.randint(0, 1) == 0:
-                        self.belief = 0
-                    else:
-                        self.belief = 1
-            '''
-            l0 = len(self.zero_bucket)
-            l1 = len(self.one_bucket)
-            if l0 > l1 or (l0 == l1) and random.choice([True, False]):
-                self.belief = 0
-                my_bucket = self.zero_bucket.copy()
-            else:
-                self.belief = 1
-                my_bucket = self.one_bucket.copy()
+                    # print("round %d : id %d belief 1" % (round + 1, myid))
+            if round == self.bar:
+                self.env.put_output(self, self.belief)
+                return
+            my_pow = self.my_mine.POW(round, myid, self.belief)
             if my_pow:
+                new_block = self.pki.sign(
+                    self, Block(round, myid, self.belief))
+                self.buckets[self.belief].append(new_block)
                 self.env.put_broadcast(self, self.pki.sign(
-                    self, Message(myid, my_bucket, round)))
-        else:
-            self.env.put_output(self, self.belief)
+                    self, Message(myid, (self.buckets[self.belief]).copy(), round)))
 
 
 class Block:
@@ -135,3 +95,6 @@ class Block:
 
     def __str__(self):
         return str(self.round) + '-' + str(self.id) + '-' + str(self.belief)
+
+    def get_sender(self):
+        return self.id

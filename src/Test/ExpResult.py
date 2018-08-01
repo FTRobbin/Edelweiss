@@ -1,5 +1,6 @@
 import hashlib
 
+from Util.Util import *
 
 class ExpResult():
 
@@ -18,6 +19,9 @@ class ExpResult():
         self.input = setting.input
         self.centralized = setting.centralized
         self.has_sender = setting.has_sender
+        self._lambda=setting._lambda
+        self.seed=setting.seed
+        
         round_history = {}
         round_count = {}
         for r in range(1, controller.round + 1):
@@ -25,14 +29,27 @@ class ExpResult():
             round_history[str(r)] = []
             round_count[str(r)] = []
             d = {}
+            # for packet in sorted(controller.message_history[r], key=lambda x: x[1].get_sender()):
+            #     print("From %d to %d content %s " %
+            #         (packet[1].get_sender(), packet[0], ListToString(packet[1].get_extraction())))
+            #     key = (packet[0], ListToString(packet[1].get_extraction()))
+            #     if key not in d:
+            #         d[key] = 0
+            #     d[key] = d[key] + 1
+            # round_history[str(r)] = sorted(round_history[str(r)])
+
+
             for packet in sorted(controller.message_history[r], key=lambda x: x[1].get_sender()):
                 round_history[str(r)].append(
-                    (packet[1].get_sender(), packet[0], packet[1].get_extraction()))
-                key = (packet[0], packet[1].get_extraction())
+                    (packet[1].get_sender(), packet[0], ListToString(packet[1].get_extraction())))
+                key = (packet[0], ListToString(packet[1].get_extraction()))
                 if key not in d:
                     d[key] = 0
                 d[key] = d[key] + 1
             round_history[str(r)] = sorted(round_history[str(r)])
+
+
+
             for k in sorted(d):
                 round_count[str(r)].append((k[0], k[1], d[k]))
         self.round_history = round_history
@@ -53,6 +70,9 @@ class ExpResult():
             str(self.centralized) + str(self.has_sender)
         if self.f > 0:
             arg = arg+self.adversary
+        if self._lambda!=-1:
+            arg = arg+str(self._lambda)
+            arg = arg+str(self.seed)
         arg.encode('utf-8')
         # hashlib.sha256((arg.encode('utf-8'))).hexdigest()
         # m.update(arg)

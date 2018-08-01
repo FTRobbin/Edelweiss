@@ -5,13 +5,13 @@ class SynBOSCOValidityCentralizedAttacker:
     name = "Synchronous BOSCO Validity centralized Attacker"
     SENDER = 0
 
-    def __init__(self, env, pki, con):
-        self.env = env
-        self.pki = pki
+    def __init__(self, **kargs):
+        self.env = kargs["env"]
+        self.pki = kargs["pki"]
         self.pki.register(self)
         self.attack_value = None
         self.called = False
-        self.con = con
+        self.con = kargs["con"]
 
     def run_node(self):
         if self.called:

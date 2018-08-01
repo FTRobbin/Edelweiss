@@ -5,9 +5,9 @@ class SynBOSCOValidityAttacker:
     name = "Synchronous BOSCO Validity Attacker"
     SENDER = 0
 
-    def __init__(self, env, pki):
-        self.env = env
-        self.pki = pki
+    def __init__(self,**kargs):
+        self.env = kargs["env"]
+        self.pki = kargs["pki"]
         self.pki.register(self)
         self.attack_value = None
 

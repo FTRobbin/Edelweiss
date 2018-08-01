@@ -1,4 +1,6 @@
 from Util.Util import *
+from Oracles.Mine import Mine
+
 
 class SynByzController:
     name = "Synchronous Byzantine Controller"
@@ -13,7 +15,6 @@ class SynByzController:
         self.tf = setting.tf
         self.env = setting.env_type(self)
         self.pki = setting.pki_type(self.env)
-        self.centralized = setting.centralized
         self.round = -1
         self.node_id = {}
         self.has_sender = setting.has_sender
@@ -21,21 +22,26 @@ class SynByzController:
         self.message_buffer = [[] for x in range(self.n)]
         self.message_history = []
         self.output = {}
+        self.centralized=setting.centralized
         self.corf = setting.corrupt_sender
-        if(self.has_sender):
+        self.mine = Mine(_lambda=setting._lambda, seed=setting.seed)
+        self._lambda=setting._lambda
+        if (self.has_sender):
             self.sender_id = setting.protocol.SENDER
         if (self.has_sender):
             self.tf = self.f
             if self.corf:
                 self.f -= 1
+        kargs={"env":self.env,"pki":self.pki,"mine":self.mine,"lambda":self._lambda,"con":self}
         for i in range(self.n):
-            if self.is_corrupt(i) and not setting.centralized:
-                self.node_id[setting.adversary(self.env, self.pki)] = i
+            if self.is_corrupt(i) and not self.centralized:
+                self.node_id[setting.adversary(**kargs)] = i
             else:
-                self.node_id[setting.protocol(self.env, self.pki)] = i
-        if(setting.centralized):
+                self.node_id[setting.protocol(**kargs)] = i
+        if (setting.centralized):
             self.centralized_adversary = setting.centralized_adversary(
-                self.env, self.pki, self)
+                **kargs)
+
 
     def is_corrupt(self, id):
         if self.has_sender:
@@ -52,7 +58,7 @@ class SynByzController:
             self.message_buffer[packet[0]].append(packet[1])
         self.message_history.append(self.message_pool)
         self.message_pool = []
-        for node in sorted(self.node_id.keys(),key=lambda x:x.env.get_id(x)):
+        for node in sorted(self.node_id.keys(), key=lambda x: x.env.get_id(x)):
             if self.centralized and self.is_corrupt(self.node_id[node]):
                 self.centralized_adversary.run_node()
             else:
@@ -72,9 +78,9 @@ class SynByzController:
         for r in range(1, self.round + 1):
             print("Round %d : " % r)
             d = {}
-            for packet in sorted(self.message_history[r],key=lambda x: x[1].get_sender()):
+            for packet in sorted(self.message_history[r], key=lambda x: x[1].get_sender()):
                 print("From %d to %d content %s " %
-                      (packet[1].get_sender(), packet[0], ListToString(packet[1].get_extraction())))
+                    (packet[1].get_sender(), packet[0], ListToString(packet[1].get_extraction())))
                 key = (packet[0], ListToString(packet[1].get_extraction()))
                 if key not in d:
                     d[key] = 0

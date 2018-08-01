@@ -13,9 +13,9 @@ class Message:
         else:
             return Message(self.sender, self.content, self.round, self.receiver, self.iden)
 
-    def get_chain(self):
+    def __str__(self):
         if type(self.content) is Message:
-            return str(self.content.get_chain()) + "|" + str(self.sender) + "|" + str(self.round) + "|" + str(
+            return str(self.content.__str__()) + "|" + str(self.sender) + "|" + str(self.round) + "|" + str(
                 self.receiver)
         else:
             return str(self.content) + "|" + str(self.sender) + "|" + str(self.round) + "|" + str(self.receiver)
