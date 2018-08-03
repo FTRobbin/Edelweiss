@@ -22,53 +22,51 @@ from Adversaries.SynBOSCOValidityCentralizedAttacker import *
 PossibleControllers = [SynByzController]
 PossibleAdversaries = [CrashAdversary, HalfHalfSenderAdversary,
                        SynBOSCOValidityAttacker, SynBOSCOValidityCentralizedAttacker]
-SettingNumToNameDict = {'1': "NaiveVoting", '2': "DecentralizedBosco", '3': "DecentralizedBoscoValidityAttack", '4': "CentralizedBosco",
-                        '5': "CentralizedBoscoValidityAttack", '6': "DolevStrong",'7':"Herding"}
-SettingDict = {"NaiveVoting": SynchronousByzantine(10, 1, PossibleAdversaries[2],
-                                                   PossibleControllers[0], f=0, tf=0, protocol=NaiveVoting,
-                                                   measure=[ByzValidity,
-                                                            ByzConsistency, ByzUnanimity],
-                                                   centralized=False, centralized_adversary=PossibleAdversaries[
-                                                       3],
-                                                   has_sender=True, corrupt_sender=False),
-               "DecentralizedBosco": SynchronousByzantine(10, [1, 1, 1, 0, 0, 0, 1, 1, 1, 1], PossibleAdversaries[2],
-                                                          PossibleControllers[0], f=3, tf=3, protocol=BOSCO,
-                                                          measure=[ByzValidity,
-                                                                   ByzConsistency, ByzUnanimity],
-                                                          centralized=False, centralized_adversary=PossibleAdversaries[3]),
-               "DecentralizedBoscoValidityAttack": SynchronousByzantine(10, [1, 1, 1, 0, 0, 0, 1, 1, 1, 1], PossibleAdversaries[2],
-                                                                        PossibleControllers[0], f=3, tf=4, protocol=BOSCO,
-                                                                        measure=[ByzValidity,
-                                                                                 ByzConsistency, ByzUnanimity],
-                                                                        centralized=False, centralized_adversary=PossibleAdversaries[3]),
-               "CentralizedBosco": SynchronousByzantine(10, [1, 1, 1, 0, 0, 0, 1, 1, 1, 1], PossibleAdversaries[3],
-                                                        PossibleControllers[0], f=3, tf=3, protocol=BOSCO,
-                                                        measure=[ByzValidity,
-                                                                 ByzConsistency, ByzUnanimity],
-                                                        centralized=True, centralized_adversary=PossibleAdversaries[3]),
-               "CentralizedBoscoValidityAttack": SynchronousByzantine(10, [1, 1, 1, 0, 0, 0, 1, 1, 1, 1], PossibleAdversaries[3],
-                                                                      PossibleControllers[0], f=3, tf=4, protocol=BOSCO,
-                                                                      measure=[ByzValidity,
-                                                                               ByzConsistency, ByzUnanimity],
-                                                                      centralized=True, centralized_adversary=PossibleAdversaries[3]),
-               "DolevStrong": SynchronousByzantine(10, 1, PossibleAdversaries[2],
-                                                   PossibleControllers[0], f=0, tf=0, protocol=DolevStrong,
-                                                   measure=[ByzValidity,
-                                                            ByzConsistency, ByzUnanimity],
-                                                   centralized=False, centralized_adversary=PossibleAdversaries[
-                                                       3],
-                                                   has_sender=True, corrupt_sender=False),
-               "Herding": SynchronousByzantine(5, [1, 0, 0, 1, 1], PossibleAdversaries[3],
-                                                         PossibleControllers[0], f=0, tf=0, protocol=Herding,
-                                                         measure=[ByzValidity,
-                                                                  ByzConsistency, ByzUnanimity],
-                                                         centralized=False, centralized_adversary=PossibleAdversaries[3], seed=0, _lambda=3)
-               }
+SettingList = [("NaiveVoting", SynchronousByzantine(10, 1, PossibleAdversaries[2],
+                                                    PossibleControllers[0], f=0, tf=0, protocol=NaiveVoting,
+                                                    measure=[ByzValidity,
+                                                             ByzConsistency, ByzUnanimity],
+                                                    centralized=False, centralized_adversary=PossibleAdversaries[
+    3],
+    has_sender=True, corrupt_sender=False)),
+    ("DecentralizedBosco", SynchronousByzantine(10, [1, 1, 1, 0, 0, 0, 1, 1, 1, 1], PossibleAdversaries[2],
+                                                PossibleControllers[0], f=3, tf=3, protocol=BOSCO,
+                                                measure=[ByzValidity,
+                                                         ByzConsistency, ByzUnanimity],
+                                                centralized=False, centralized_adversary=PossibleAdversaries[3])),
+    ("DecentralizedBoscoValidityAttack", SynchronousByzantine(10, [1, 1, 1, 0, 0, 0, 1, 1, 1, 1], PossibleAdversaries[2],
+                                                              PossibleControllers[0], f=3, tf=4, protocol=BOSCO,
+                                                              measure=[ByzValidity,
+                                                                       ByzConsistency, ByzUnanimity],
+                                                              centralized=False, centralized_adversary=PossibleAdversaries[3])),
+    ("CentralizedBosco", SynchronousByzantine(10, [1, 1, 1, 0, 0, 0, 1, 1, 1, 1], PossibleAdversaries[3],
+                                              PossibleControllers[0], f=3, tf=3, protocol=BOSCO,
+                                              measure=[ByzValidity,
+                                                       ByzConsistency, ByzUnanimity],
+                                              centralized=True, centralized_adversary=PossibleAdversaries[3])),
+    ("CentralizedBoscoValidityAttack", SynchronousByzantine(10, [1, 1, 1, 0, 0, 0, 1, 1, 1, 1], PossibleAdversaries[3],
+                                                            PossibleControllers[0], f=3, tf=4, protocol=BOSCO,
+                                                            measure=[ByzValidity,
+                                                                     ByzConsistency, ByzUnanimity],
+                                                            centralized=True, centralized_adversary=PossibleAdversaries[3])),
+    ("DolevStrong", SynchronousByzantine(10, 1, PossibleAdversaries[2],
+                                         PossibleControllers[0], f=0, tf=0, protocol=DolevStrong,
+                                         measure=[ByzValidity,
+                                                  ByzConsistency, ByzUnanimity],
+                                         centralized=False, centralized_adversary=PossibleAdversaries[
+        3],
+        has_sender=True, corrupt_sender=False)),
+    ("Herding", SynchronousByzantine(5, [1, 0, 0, 1, 1], PossibleAdversaries[3],
+                                     PossibleControllers[0], f=0, tf=0, protocol=Herding,
+                                     measure=[ByzValidity,
+                                              ByzConsistency, ByzUnanimity],
+                                     centralized=False, centralized_adversary=PossibleAdversaries[3], seed=0, _lambda=3))
+]
 
 
 def generate_benchmark():
     jsonfile = {}
-    for name, setting in SettingDict.items():
+    for (name, setting) in SettingList:
         exp = Experiment(setting)
         exp.run()
         res = exp.save_output()
@@ -84,7 +82,7 @@ def test(settings):
         content = f.read()
         data = jsonpickle.decode(content)
     cnt = 0
-    for name, setting in settings.items():
+    for (name, setting) in settings:
         exp = Experiment(setting)
         exp.run()
         res = exp.save_output()
@@ -130,21 +128,17 @@ def main():
                 raise RuntimeError
             settings = {}
             if res[0].isdigit():
-                for k, v in SettingNumToNameDict.items():
-                    if k in res:
-                        settings[SettingNumToNameDict[k]
-                                 ] = SettingDict[SettingNumToNameDict[k]]
+                settings = list(filter(lambda x: str(
+                    SettingList.index(x)+1) in res, SettingList))
             elif res[0].isalpha():
-                for k, v in SettingDict.items():
-                    if k in res:
-                        settings[k] = v
+                pass
             else:
                 raise RuntimeError
             test(settings)
             sys.exit()
         else:
             assert False, "unhandled option"
-    test(SettingDict)
+    test(SettingList)
 
 
 def usage():

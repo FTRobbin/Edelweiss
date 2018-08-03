@@ -80,8 +80,8 @@ class SynByzController:
             d = {}
             for packet in sorted(self.message_history[r], key=lambda x: x[1].get_sender()):
                 print("From %d to %d content %s " %
-                    (packet[1].get_sender(), packet[0], ListToString(packet[1].get_extraction())))
-                key = (packet[0], ListToString(packet[1].get_extraction()))
+                    (packet[1].get_sender(), packet[0], str(packet[1])))
+                key = (packet[0], str(packet[1]))
                 if key not in d:
                     d[key] = 0
                 d[key] = d[key] + 1
@@ -90,10 +90,14 @@ class SynByzController:
             for k in sorted(d):
                 print("Receiver %d receive %s for %d times " %
                       (k[0], k[1], d[k]))
+        for k,v in sorted(self.mine.memory.items()):
+            print(k, end=' ')
+            # for v in self.mine.memory[k]:
+            print(self.mine.memory[k])
 
         print(" ")
         print("Node Output :")
-        for x, y in self.output.items():
+        for x, y in sorted(self.output.items()):
             print("Node %d : %s" % (x, str(y)))
 
     def get_message_buffer(self, node):

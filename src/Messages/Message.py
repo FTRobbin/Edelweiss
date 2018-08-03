@@ -1,3 +1,5 @@
+from Util.Util import  *
+
 class Message:
 
     def __init__(self, sender, content, round=None, receiver=None, iden=None):
@@ -15,10 +17,9 @@ class Message:
 
     def __str__(self):
         if type(self.content) is Message:
-            return str(self.content.__str__()) + "|" + str(self.sender) + "|" + str(self.round) + "|" + str(
-                self.receiver)
+            return str(self.content) + "|" + str(self.sender)
         else:
-            return str(self.content) + "|" + str(self.sender) + "|" + str(self.round) + "|" + str(self.receiver)
+            return ContentToString(self.content) + "|" + str(self.sender)
 
     def get_extraction(self):
         if type(self.content) is Message:
