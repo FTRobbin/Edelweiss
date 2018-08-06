@@ -16,9 +16,6 @@ class ByzValidity:
             for x, y in con.output.items():
                 if not con.is_corrupt(x) and y not in input_local:
                     valid = False
-        # print("Validity : " + str(valid))
-        # if not valid:
-        #     print("\033[1;31mOops! Validity is violated \033[0m")
         return ("Validity",bool(valid))
 
 

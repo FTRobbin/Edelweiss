@@ -1,19 +1,11 @@
 
 # Project Edelweiss (Work in Progress)
 
-
-
 Edelweiss is a lightweight consensus protocol simulator.
 
 For safer and better consensus protocols!
 
 The program has been tested under python3.5 and python3.6
-
-## Features
-
-1. *Easy to implement new protocols*
-2. *Understanding existing protocols*
-3. *Easy to attack*
 
 ## Goal
 
@@ -22,7 +14,7 @@ middle and final results of the running of the protocol and get to understand th
 
 - Provide a set of controllers,environments,settings,adversaries result measures and Communication techniques so that you can easily implement and test your new consensus protocols without worring about the 'dirty work' of implementing it.
 
-- Simulate the kinds of attacks that is theoretical possible but difficulty to achieve or observe in real distributed systems. 
+- Simulate the kinds of attacks that is theoretical possible but difficulty to achieve or observe in real distributed systems.
 
 ## Getting Started
 
@@ -38,17 +30,10 @@ git clone git@github.com:FTRobbin/Edelweiss.git
 
 ## Run an experiment
 
-```sh
-python Main.py
-```
-
-or
 
 ```sh
 python3 Main.py
 ```
-
-
 
 ---
 

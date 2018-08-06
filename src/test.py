@@ -18,10 +18,11 @@ from Controllers.SynByzController import *
 from Adversaries.HalfHalfSenderAdversary import *
 from Adversaries.SynBOSCOValidityAttacker import *
 from Adversaries.SynBOSCOValidityCentralizedAttacker import *
+from Adversaries.SynHerdingValidityAttacker import *
 
 PossibleControllers = [SynByzController]
 PossibleAdversaries = [CrashAdversary, HalfHalfSenderAdversary,
-                       SynBOSCOValidityAttacker, SynBOSCOValidityCentralizedAttacker]
+                       SynBOSCOValidityAttacker, SynBOSCOValidityCentralizedAttacker, SynHerdingValidityAttacker]
 SettingList = [("NaiveVoting", SynchronousByzantine(10, 1, PossibleAdversaries[2],
                                                     PossibleControllers[0], f=0, tf=0, protocol=NaiveVoting,
                                                     measure=[ByzValidity,
@@ -44,7 +45,8 @@ SettingList = [("NaiveVoting", SynchronousByzantine(10, 1, PossibleAdversaries[2
                                               measure=[ByzValidity,
                                                        ByzConsistency, ByzUnanimity],
                                               centralized=True, centralized_adversary=PossibleAdversaries[3])),
-    ("CentralizedBoscoValidityAttack", SynchronousByzantine(10, [1, 1, 1, 0, 0, 0, 1, 1, 1, 1], PossibleAdversaries[3],
+    ("CentralizedBoscoValidityAttack", SynchronousByzantine(10, [1, 1, 1, 0, 0, 0, 1, 1, 1, 1,
+                                                                 ], PossibleAdversaries[3],
                                                             PossibleControllers[0], f=3, tf=4, protocol=BOSCO,
                                                             measure=[ByzValidity,
                                                                      ByzConsistency, ByzUnanimity],
@@ -56,11 +58,18 @@ SettingList = [("NaiveVoting", SynchronousByzantine(10, 1, PossibleAdversaries[2
                                          centralized=False, centralized_adversary=PossibleAdversaries[
         3],
         has_sender=True, corrupt_sender=False)),
-    ("Herding", SynchronousByzantine(5, [1, 0, 0, 1, 1], PossibleAdversaries[3],
+    ("Herding", SynchronousByzantine(10, [0, 0, 0, 0, 1, 1, 1, 0, 1, 1,
+                                          ], PossibleAdversaries[3],
                                      PossibleControllers[0], f=0, tf=0, protocol=Herding,
                                      measure=[ByzValidity,
                                               ByzConsistency, ByzUnanimity],
-                                     centralized=False, centralized_adversary=PossibleAdversaries[3], seed=0, _lambda=3))
+                                     centralized=False, centralized_adversary=PossibleAdversaries[3], seed=0, _lambda=3)),
+    ("HerdingValidityAttack", SynchronousByzantine(10, [1, 0, 1, 0, 1, 0, 1, 0, 1, 0], PossibleAdversaries[4],
+                                                   PossibleControllers[0], f=0, tf=0, protocol=Herding,
+                                                   measure=[ByzValidity,
+                                                            ByzConsistency, ByzUnanimity],
+                                                   centralized=False, centralized_adversary=PossibleAdversaries[3], seed=0, _lambda=4))
+
 ]
 
 

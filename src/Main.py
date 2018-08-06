@@ -19,11 +19,34 @@ from Test.Report import *
 from test import *
 
 
+def stat():
+    test_list = [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]
+    setting = SynchronousByzantine(10, test_list, PossibleAdversaries[4],
+                                   PossibleControllers[0], f=4, tf=4, protocol=Herding,
+                                   measure=[ByzValidity,
+                                            ByzConsistency, ByzUnanimity],
+                                   centralized=False, centralized_adversary=PossibleAdversaries[3], seed=None, _lambda=4)
+    stat_dict = {'Consistency': 0, 'Validity': 0, 'Unanimity': 0}
+    for i in range(100):
+        random.shuffle(test_list)
+        res = run_and_get_result(setting)
+        for k, v in stat_dict.items():
+            if not res[k]:
+                stat_dict[k] = v+1
+    print(stat_dict)
+
+
 def run_and_print(setting):
     exp = Experiment(setting)
     exp.run()
     res = exp.save_output()
     res[1].print()
+
+
+def run_and_get_result(setting):
+    exp = Experiment(setting)
+    exp.run()
+    return exp.get_result()
 
 
 def main():
@@ -52,7 +75,7 @@ def main():
                 raise RuntimeError
         else:
             assert False, "unhandled option"
-    run_and_print(SettingList[-1][1])
+    run_and_get_result(SettingList[-1][1])
 
 
 def usage():
@@ -62,4 +85,5 @@ def usage():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    stat()

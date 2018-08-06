@@ -37,4 +37,7 @@ class SynByzEnvironment:
 
     def put_output(self, sk, output):
         self.controller.put_output(sk, output)
+    
+    def check_corrupt(self,sk):
+        return  self.controller.is_corrupt(sk)
 

@@ -38,3 +38,10 @@ class Experiment:
     def save_output(self):
         result = ExpResult(self.setting,self.controller)
         return (result.object_key(),result)
+    
+    def get_result(self):
+        measure_dict={}
+        for m in self.setting.measure:
+            measure_dict[m.measure(self.controller)[0]]=m.measure(self.controller)[1]
+        return measure_dict
+

@@ -1,7 +1,7 @@
 import random
 
 from Messages.Message import Message
-
+from Util.Util import  *
 
 class Herding:
     name = "Herding Protocol"
@@ -22,10 +22,13 @@ class Herding:
         sender_round_set = []
         belief = -1
         round = -1
+        current_round = self.env.get_round()
         for block in bucket:
             if belief == -1:
                 belief = block.belief
             elif belief != block.belief:
+                return False
+            if block.round > current_round:
                 return False
             if block.round <= round:
                 return False
@@ -54,10 +57,14 @@ class Herding:
                     raise RuntimeError
                 bucket = msg.get_extraction()
                 if not bool(bucket):
-                    return
+                    bool(bucket)
+                    raise  RuntimeError
                 if self.bucket_verify(bucket):
                     bucket_lists[bucket[0].belief].append(bucket.copy())
             i = 0
+            for bucket in self.buckets:
+                if bucket:
+                    bucket_lists[bucket[0].belief].append(bucket.copy())
             for bucket_list in bucket_lists:
                 if bucket_list:
                     self.buckets[i] = max(bucket_list, key=lambda x: len(x))
@@ -65,8 +72,9 @@ class Herding:
             l0 = len(self.buckets[0])
             l1 = len(self.buckets[1])
             # print("round %d : id %d belief %d" % (round + 1, myid, self.belief))
-            if round != 1:
-                if l0 > l1 or (l0 == l1) and random.choice([True, False]):
+            if round != 1 and l0 != 0 or l1 != 0:
+                if l0 > l1 or ((l0 == l1) and random.choice([True, False])):
+                    # if l0 > l1 or (l0 == l1):
                     self.belief = 0
                     # print("round %d : id %d belief 0" % (round + 1, myid))
                 else:
@@ -84,17 +92,4 @@ class Herding:
                     self, Message(myid, (self.buckets[self.belief]).copy(), round)))
 
 
-class Block:
-    def __init__(self, round, id, belief):
-        self.round = round
-        self.id = id
-        self.belief = belief
 
-    def verify(self):
-        return True
-
-    def __str__(self):
-        return str(self.round) + '-' + str(self.id) + '-' + str(self.belief)
-
-    def get_sender(self):
-        return self.id

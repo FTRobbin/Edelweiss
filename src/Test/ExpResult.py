@@ -92,10 +92,13 @@ class ExpResult():
         print("Message History :")
 
         for k, v in sorted(self.round_history.items(),key=lambda kv: int(kv[0])):
-            print("Round "+k)
+            if k=='0':
+                continue
+            print("Round "+str(int(k)))
             for bucket in self.round_history[k]:
                 print("from "+str(bucket[0])+" to " +
-                      str(bucket[1])+" content "+str(bucket[2]))
+                    str(bucket[1])+" content "+str(bucket[2]))
+
             print("Summary")
             for (receiver, content, times) in self.round_count[k]:
                 print("Receiver "+str(receiver)+" Receive " +
