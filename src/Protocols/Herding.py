@@ -73,8 +73,8 @@ class Herding:
             l1 = len(self.buckets[1])
             # print("round %d : id %d belief %d" % (round + 1, myid, self.belief))
             if round != 1 and l0 != 0 or l1 != 0:
-                if l0 > l1 or ((l0 == l1) and random.choice([True, False])):
-                    # if l0 > l1 or (l0 == l1):
+                # if l0 > l1 or ((l0 == l1) and random.choice([True, False])):
+                if l0 > l1 or (l0 == l1):
                     self.belief = 0
                     # print("round %d : id %d belief 0" % (round + 1, myid))
                 else:

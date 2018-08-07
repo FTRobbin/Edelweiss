@@ -25,22 +25,32 @@ class SynHerdingValidityAttacker:
                     self.pow_info[(i, j, k)] = self.my_mine.POW(i, j, k)
         self.corrupt_node_list = list(
             filter(lambda x: self.env.check_corrupt(x), range(self.env.get_n())))
+        self.node_receive_bucket_len = {}
+        for i in range(self.env.get_n()):
+            if self.env.check_corrupt(i):
+                continue
+            self.node_receive_bucket_len[i] = [0, 0]
+        self.predict_node_belief = {}  # estimate of current belief of every node
+        for i in range(self.env.get_n()):
+            if self.env.check_corrupt(i):
+                continue
+            self.predict_node_belief[i] = random.choice([0, 1])
 
     def bucket_verify(self, bucket):
-        sender_round_set = []
-        belief = -1
-        round = -1
-        current_round = self.env.get_round()
+        sender_round_set=[]
+        belief=-1
+        round=-1
+        current_round=self.env.get_round()
         for block in bucket:
             if belief == -1:
-                belief = block.belief
+                belief=block.belief
             elif belief != block.belief:
                 return False
             if block.round > current_round:
                 return False
             if block.round <= round:
                 return False
-            round = block.round
+            round=block.round
             if not self.pki.verify(block):
                 self.pki.verify(block)
                 return False
@@ -52,23 +62,21 @@ class SynHerdingValidityAttacker:
         return True
 
     def run_node(self):
-        round = self.env.get_round()
-        myid = self.env.get_id(self)
+        round=self.env.get_round()
+        myid=self.env.get_id(self)
         if round == 0:
-            self.belief = self.env.get_input(myid)
+            self.belief=self.env.get_input(myid)
         elif round < self.bar-1:
-            msgs = self.env.get_input_msgs(self)
-            bucket_lists = [[], []]
+            msgs=self.env.get_input_msgs(self)
+            bucket_lists=[[], []]
 
             # mapping from node to the length of max bucket it receives
-            node_receive_bucket_len = {}
-            for i in range(self.env.get_n()):
-                node_receive_bucket_len[i] = [-1, -1]
+
             for msg in msgs:
                 if (not self.pki.verify(msg)):
                     self.pki.verify(msg)
                     raise RuntimeError
-                content = msg.get_extraction()
+                content=msg.get_extraction()
                 if type(content) is list:  # receive a bucket
                     if not bool(content):
                         return
@@ -78,14 +86,14 @@ class SynHerdingValidityAttacker:
                             bucket_lists[content[0].belief].append(
                                 content.copy())
                         else:  # msg from adversary
-                            self.buckets[content[0].belief] = max(
-                                self.buckets[content[0].belief], content.copy(), key=lambda x: len(x))
+                            self.buckets[content[0].belief]=max(
+                                self.buckets[content[0].belief], content.copy(), key = lambda x: len(x))
                 else:  # receive a (receiver,bucket) tuple,this msg is from another adversary
                     if not content[1]:
                         raise RuntimeError
                     if self.bucket_verify(content[1]):
-                        node_receive_bucket_len[content[0]][content[1][0].belief] = max(
-                            len(content[1]), node_receive_bucket_len[content[0]][content[1][0].belief])
+                        self.node_receive_bucket_len[content[0]][content[1][0].belief] = max(
+                            len(content[1]), self.node_receive_bucket_len[content[0]][content[1][0].belief])
             # msg from broadcast
             if not bucket_lists[0]:
                 l0 = -1
@@ -96,16 +104,23 @@ class SynHerdingValidityAttacker:
             else:
                 l1 = len(max(bucket_lists[1], key=lambda x: len(x)))
             for i in range(self.env.get_n()):
-                node_receive_bucket_len[i][0] = max(
-                    l0, node_receive_bucket_len[i][0])
-                node_receive_bucket_len[i][1] = max(
-                    l1, node_receive_bucket_len[i][1])
-            predict_node_belief = {}  # estimate of current belief of every node
+                if self.env.check_corrupt(i):
+                    continue
+                self.node_receive_bucket_len[i][0] = max(
+                    l0, self.node_receive_bucket_len[i][0])
+                self.node_receive_bucket_len[i][1] = max(
+                    l1, self.node_receive_bucket_len[i][1])
             for i in range(self.env.get_n()):
-                if node_receive_bucket_len[i][0] >= node_receive_bucket_len[i][1]:
-                    predict_node_belief[i] = 0  # current belief of node i is 0
+                if self.env.check_corrupt(i):
+                    continue
+                if self.node_receive_bucket_len[i][0] == 0 and self.node_receive_bucket_len[i][1] == 0:
+                    continue
+                if self.node_receive_bucket_len[i][0] >= self.node_receive_bucket_len[i][1]:
+                    # current belief of node i is 0
+                    self.predict_node_belief[i] = 0
                 else:
-                    predict_node_belief[i] = 1  # current belief of node i is 1
+                    # current belief of node i is 1
+                    self.predict_node_belief[i] = 1
 
             for bucket in self.buckets:
                 if bucket:
@@ -127,15 +142,14 @@ class SynHerdingValidityAttacker:
                 if self.env.check_corrupt(i):
                     pass
                 else:
-                    if self.pow_info[(round, i, 0)] and predict_node_belief[i] == 0:
+                    if self.pow_info[(round, i, 0)] and self.predict_node_belief[i] == 0:
                         predict_bucketslen[0] = max(
-                            predict_bucketslen[0], node_receive_bucket_len[i][0]+1)
-                    elif self.pow_info[(round, i, 1)] and predict_node_belief[i] == 1:
+                            predict_bucketslen[0], self.node_receive_bucket_len[i][0]+1)
+                        self.node_receive_bucket_len[i][0] += 1
+                    elif self.pow_info[(round, i, 1)] and self.predict_node_belief[i] == 1:
                         predict_bucketslen[1] = max(
-                            predict_bucketslen[1], node_receive_bucket_len[i][1]+1)
-            l = [None, None]
-            l[0] = predict_bucketslen[0] >= predict_bucketslen[1]
-            l[1] = predict_bucketslen[0] < predict_bucketslen[1]
+                            predict_bucketslen[1], self.node_receive_bucket_len[i][1]+1)
+                        self.node_receive_bucket_len[i][1] += 1
             for i in range(self.env.get_n()):
                 if self.env.check_corrupt(i):
                     for j in range(2):
@@ -143,10 +157,13 @@ class SynHerdingValidityAttacker:
                             self.env.put_packet(self, self.pki.sign(
                                 self, Message(myid, self.buckets[j])), i)
                 else:
+                    if self.pow_info[(round+1, i, 0)] == 1 and self.pow_info[(round+1, i, 1)] == 1:
+                        continue
                     for j in range(2):
-                        if self.pow_info[(round+1, i, j)] == 1 and l[j]:
-                            if len(self.buckets[1-j]) > predict_bucketslen[j]+1:
-                                stop = predict_bucketslen[j]+1
+                        if self.pow_info[(round+1, i, j)] == 1:
+                            if len(self.buckets[1-j]) > max(predict_bucketslen[j], self.node_receive_bucket_len[i][j])+1:
+                                stop = max(
+                                    predict_bucketslen[j], self.node_receive_bucket_len[i][j])+1
                             else:
                                 stop = len(self.buckets[1-j])
                             if self.buckets[1-j][0:stop]:

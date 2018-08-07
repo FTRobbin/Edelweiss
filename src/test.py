@@ -64,11 +64,11 @@ SettingList = [("NaiveVoting", SynchronousByzantine(10, 1, PossibleAdversaries[2
                                      measure=[ByzValidity,
                                               ByzConsistency, ByzUnanimity],
                                      centralized=False, centralized_adversary=PossibleAdversaries[3], seed=0, _lambda=3)),
-    ("HerdingValidityAttack", SynchronousByzantine(10, [1, 0, 1, 0, 1, 0, 1, 0, 1, 0], PossibleAdversaries[4],
-                                                   PossibleControllers[0], f=0, tf=0, protocol=Herding,
+    ("HerdingValidityAttack", SynchronousByzantine(10, [1,1,1,1,1,0,0,0,0,0], PossibleAdversaries[4],
+                                                   PossibleControllers[0], f=5, tf=5, protocol=Herding,
                                                    measure=[ByzValidity,
                                                             ByzConsistency, ByzUnanimity],
-                                                   centralized=False, centralized_adversary=PossibleAdversaries[3], seed=0, _lambda=4))
+                                                   centralized=False, centralized_adversary=PossibleAdversaries[3], seed=4, _lambda=4))
 
 ]
 

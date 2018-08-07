@@ -22,9 +22,10 @@ from test import *
 def stat():
     test_list = [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]
     setting = SynchronousByzantine(10, test_list, PossibleAdversaries[4],
-                                   PossibleControllers[0], f=4, tf=4, protocol=Herding,
+                                   PossibleControllers[0], f=5, tf=5, protocol=Herding,
                                    measure=[ByzValidity,
                                             ByzConsistency, ByzUnanimity],
+        # rng = random.seed(8624404103361372903)
                                    centralized=False, centralized_adversary=PossibleAdversaries[3], seed=None, _lambda=4)
     stat_dict = {'Consistency': 0, 'Validity': 0, 'Unanimity': 0}
     for i in range(100):
@@ -75,7 +76,7 @@ def main():
                 raise RuntimeError
         else:
             assert False, "unhandled option"
-    run_and_get_result(SettingList[-1][1])
+    run_and_print(SettingList[-1][1])
 
 
 def usage():

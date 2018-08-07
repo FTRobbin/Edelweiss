@@ -17,6 +17,7 @@ class ExpResult():
         self.f = setting.f
         self.tf = setting.tf
         self.n = setting.n
+        self.seed=setting.seed
         self.input = setting.input
         self.centralized = setting.centralized
         self.has_sender = setting.has_sender
@@ -87,6 +88,7 @@ class ExpResult():
         if self.tf > 0:
             print("num of corruptions : %d" % self.tf)
         print("")
+        print("Seed is:"+str(self.seed))
         print("Experiment Result:")
         print("")
         print("Message History :")
