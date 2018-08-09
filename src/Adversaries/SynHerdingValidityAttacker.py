@@ -16,7 +16,7 @@ class SynHerdingValidityAttacker:
         self._lambda = kargs["lambda"]
         self.buckets = [[], []]
         self.belief = None
-        self.bar = 1 * self._lambda * self._lambda
+        self.bar = self.env.get_k() * self._lambda * self._lambda
         self.my_mine = kargs["mine"]
         self.pow_info = {}
         for i in range(self.bar):  # round
@@ -34,41 +34,37 @@ class SynHerdingValidityAttacker:
         for i in range(self.env.get_n()):
             if self.env.check_corrupt(i):
                 continue
-            self.predict_node_belief[i] = random.choice([0, 1])
+            self.predict_node_belief[i] = 1
 
     def bucket_verify(self, bucket):
-        sender_round_set=[]
-        belief=-1
-        round=-1
-        current_round=self.env.get_round()
+        belief = -1
+        round = -1
+        current_round = self.env.get_round()
         for block in bucket:
             if belief == -1:
-                belief=block.belief
+                belief = block.belief
             elif belief != block.belief:
                 return False
             if block.round > current_round:
                 return False
             if block.round <= round:
                 return False
-            round=block.round
+            round = block.round
             if not self.pki.verify(block):
                 self.pki.verify(block)
                 return False
-            if not self.my_mine.verify(block.round, block.id, block.belief):
+            if not self.my_mine.POW(block.round, block.id, block.belief):
                 return False
-            if (block.round, block.id) in sender_round_set:
-                return False
-            sender_round_set.append((block.round, block.id))
         return True
 
     def run_node(self):
-        round=self.env.get_round()
-        myid=self.env.get_id(self)
+        round = self.env.get_round()
+        myid = self.env.get_id(self)
         if round == 0:
-            self.belief=self.env.get_input(myid)
+            self.belief = self.env.get_input(myid)
         elif round < self.bar-1:
-            msgs=self.env.get_input_msgs(self)
-            bucket_lists=[[], []]
+            msgs = self.env.get_input_msgs(self)
+            bucket_lists = [[], []]
 
             # mapping from node to the length of max bucket it receives
 
@@ -76,7 +72,7 @@ class SynHerdingValidityAttacker:
                 if (not self.pki.verify(msg)):
                     self.pki.verify(msg)
                     raise RuntimeError
-                content=msg.get_extraction()
+                content = msg.get_extraction()
                 if type(content) is list:  # receive a bucket
                     if not bool(content):
                         return
@@ -86,8 +82,8 @@ class SynHerdingValidityAttacker:
                             bucket_lists[content[0].belief].append(
                                 content.copy())
                         else:  # msg from adversary
-                            self.buckets[content[0].belief]=max(
-                                self.buckets[content[0].belief], content.copy(), key = lambda x: len(x))
+                            self.buckets[content[0].belief] = max(
+                                self.buckets[content[0].belief], content.copy(), key=lambda x: len(x))
                 else:  # receive a (receiver,bucket) tuple,this msg is from another adversary
                     if not content[1]:
                         raise RuntimeError
@@ -125,11 +121,9 @@ class SynHerdingValidityAttacker:
             for bucket in self.buckets:
                 if bucket:
                     bucket_lists[bucket[0].belief].append(bucket.copy())
-            i = 0
             for bucket_list in bucket_lists:
                 if bucket_list:
-                    self.buckets[i] = max(bucket_list, key=lambda x: len(x))
-                i += 1
+                    self.buckets[bucket_list[0][0].belief] = max(bucket_list, key=lambda x: len(x))
             for i in range(2):
                 my_pow = self.pow_info[(round, myid, i)]
                 if my_pow:

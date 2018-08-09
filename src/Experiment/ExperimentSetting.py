@@ -16,7 +16,7 @@ class SynchronousByzantine:
                  f=0, tf=0,
                  protocol=None, measure=[],
                  centralized=False, centralized_adversary=None,
-                 has_sender=False, corrupt_sender=False,seed=None,_lambda=-1):
+                 has_sender=False, corrupt_sender=False, seed=None, _lambda=-1, k=1):
         self.experiment_type = "Synchronous Byzantine"
         self.n = n
         self.input = input
@@ -27,13 +27,14 @@ class SynchronousByzantine:
         self.env_type = SynByzEnvironment
         self.pki_type = IdealPKI
         self.protocol = protocol
-        self.centralized=centralized
+        self.centralized = centralized
         self.centralized_adversary = centralized_adversary
         self.measure = measure
         self.has_sender = has_sender
         self.corrupt_sender = corrupt_sender
-        self.seed=seed
-        self._lambda=_lambda
+        self.seed = seed
+        self._lambda = _lambda
+        self.k = k
 
     def clone(self):
         ret = SynchronousByzantine(
@@ -60,3 +61,24 @@ class SynchronousByzantine:
             print("input : %d" % self.input)
         if tf > 0:
             print("num of corruptions : %d" % tf)
+
+    def set_n(self, n):
+        self.n = n
+
+    def set_input(self, input):
+        self.input = input
+
+    def set_f(self, f):
+        self.f = f
+
+    def set_tf(self, tf):
+        self.tf = tf
+
+    def set_seed(self, seed):
+        self.seed = seed
+
+    def set_lambda(self, _lambda):
+        self._lambda = _lambda
+
+    def set_k(self, k):
+        self.k = k

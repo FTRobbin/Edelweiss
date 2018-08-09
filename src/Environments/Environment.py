@@ -40,4 +40,7 @@ class SynByzEnvironment:
     
     def check_corrupt(self,sk):
         return  self.controller.is_corrupt(sk)
+    
+    def get_k(self):
+        return self.controller.k
 

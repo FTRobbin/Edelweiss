@@ -18,8 +18,7 @@ class IdealPKI:
         return self.sk[id]
 
     def sign(self, sk, info):
-        if self.env.get_id(sk) != info.get_sender() and (type(info) is Message
-           and type(info.get_content()) is not Message or self.verify(info.get_content())):
+        if (self.env.get_id(sk) != info.get_sender()) and ((type(info) is Message) and (type(info.get_content()) is not Message or self.verify(info.get_content()))):
             raise RuntimeError
         if type(info) is Message:
             self.msg_mem.add(info.__str__())

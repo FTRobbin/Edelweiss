@@ -1,7 +1,8 @@
 import random
 
 from Messages.Message import Message
-from Util.Util import  *
+from Util.Util import *
+
 
 class Herding:
     name = "Herding Protocol"
@@ -15,11 +16,10 @@ class Herding:
         self._lambda = kargs["lambda"]
         self.buckets = [[], []]
         self.belief = None
-        self.bar = 1 * self._lambda * self._lambda
+        self.bar = self.env.get_k() * self._lambda * self._lambda
         self.my_mine = kargs["mine"]
 
     def bucket_verify(self, bucket):
-        sender_round_set = []
         belief = -1
         round = -1
         current_round = self.env.get_round()
@@ -35,11 +35,8 @@ class Herding:
             round = block.round
             if not self.pki.verify(block):
                 return False
-            if not self.my_mine.verify(block.round, block.id, block.belief):
+            if not self.my_mine.POW(block.round, block.id, block.belief):
                 return False
-            if (block.round, block.id) in sender_round_set:
-                return False
-            sender_round_set.append((block.round, block.id))
         return True
 
     def run_node(self):
@@ -58,23 +55,21 @@ class Herding:
                 bucket = msg.get_extraction()
                 if not bool(bucket):
                     bool(bucket)
-                    raise  RuntimeError
+                    raise RuntimeError
                 if self.bucket_verify(bucket):
                     bucket_lists[bucket[0].belief].append(bucket.copy())
-            i = 0
             for bucket in self.buckets:
                 if bucket:
                     bucket_lists[bucket[0].belief].append(bucket.copy())
             for bucket_list in bucket_lists:
                 if bucket_list:
-                    self.buckets[i] = max(bucket_list, key=lambda x: len(x))
-                i += 1
+                    self.buckets[bucket_list[0][0].belief] = max(bucket_list, key=lambda x: len(x))
             l0 = len(self.buckets[0])
             l1 = len(self.buckets[1])
             # print("round %d : id %d belief %d" % (round + 1, myid, self.belief))
-            if round != 1 and l0 != 0 or l1 != 0:
+            if  l0 != 0 or l1 != 0:
                 # if l0 > l1 or ((l0 == l1) and random.choice([True, False])):
-                if l0 > l1 or (l0 == l1):
+                if (l0 > l1) or (l0 == l1):
                     self.belief = 0
                     # print("round %d : id %d belief 0" % (round + 1, myid))
                 else:
@@ -90,6 +85,3 @@ class Herding:
                 self.buckets[self.belief].append(new_block)
                 self.env.put_broadcast(self, self.pki.sign(
                     self, Message(myid, (self.buckets[self.belief]).copy(), round)))
-
-
-

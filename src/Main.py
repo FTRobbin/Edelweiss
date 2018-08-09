@@ -17,42 +17,14 @@ from Adversaries.SynBOSCOValidityAttacker import *
 from Adversaries.SynBOSCOValidityCentralizedAttacker import *
 from Test.Report import *
 from test import *
+from Stat.AdversaryStat import *
 
-
-def stat():
-    test_list = [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]
-    setting = SynchronousByzantine(10, test_list, PossibleAdversaries[4],
-                                   PossibleControllers[0], f=5, tf=5, protocol=Herding,
-                                   measure=[ByzValidity,
-                                            ByzConsistency, ByzUnanimity],
-        # rng = random.seed(8624404103361372903)
-                                   centralized=False, centralized_adversary=PossibleAdversaries[3], seed=None, _lambda=4)
-    stat_dict = {'Consistency': 0, 'Validity': 0, 'Unanimity': 0}
-    for i in range(100):
-        random.shuffle(test_list)
-        res = run_and_get_result(setting)
-        for k, v in stat_dict.items():
-            if not res[k]:
-                stat_dict[k] = v+1
-    print(stat_dict)
-
-
-def run_and_print(setting):
-    exp = Experiment(setting)
-    exp.run()
-    res = exp.save_output()
-    res[1].print()
-
-
-def run_and_get_result(setting):
-    exp = Experiment(setting)
-    exp.run()
-    return exp.get_result()
+SettingList=[]
 
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hi:", ["help", "input="])
+        opts, args = getopt.getopt(sys.argv[1:], "hsi:", ["help", "stat","input="])
     except getopt.GetoptError as err:
         # print help information and exit:
         print(str(err))  # will print something like "option -a not recognized"
@@ -74,6 +46,9 @@ def main():
                 pass
             else:
                 raise RuntimeError
+        elif o in ("-s", "--stat"):
+            SynHerdingValidityAttackStat()
+            sys.exit()
         else:
             assert False, "unhandled option"
     run_and_print(SettingList[-1][1])
@@ -82,9 +57,9 @@ def main():
 def usage():
     print("Usage: [options]")
     print("-h               Display help information")
-    print("-i input list    cases to be execuated")
+    print("-i input list    Cases to be execuated")
+    print("-s               Get the statistics of an Attack")
 
 
 if __name__ == "__main__":
-    # main()
-    stat()
+    main()
