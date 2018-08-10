@@ -15,4 +15,6 @@ def stat(setting,input,f,tf,_lambda,times):
         for k, v in stat_dict.items():
             if not res[k]:
                 stat_dict[k] = v+1
+    for k,v in stat_dict.items():
+        stat_dict[k]=v/times
     print(stat_dict)
