@@ -24,9 +24,9 @@ class SynByzController:
         self.output = {}
         self.centralized=setting.centralized
         self.corf = setting.corrupt_sender
-        self.mine = Mine(_lambda=setting._lambda, seed=setting.seed,n=self.n)
-        self._lambda=setting._lambda
         self.k=setting.k
+        self._lambda=setting._lambda
+        self.mine = Mine(setting._lambda,self.k,self.n, seed=setting.seed)
         if (self.has_sender):
             self.sender_id = setting.protocol.SENDER
         if (self.has_sender):

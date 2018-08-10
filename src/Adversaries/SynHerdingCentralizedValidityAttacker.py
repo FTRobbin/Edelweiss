@@ -119,9 +119,9 @@ class SynHerdingCentralizedValidityAttacker:
                         continue
                     for j in range(2):
                         if self.pow_info[(round+1, i, j)] == 1:
-                            if len(self.buckets[1-j]) > max(predict_bucketslen[j], self.node_receive_bucket_len[i][j]):
+                            if len(self.buckets[1-j]) >= max(predict_bucketslen[j], self.node_receive_bucket_len[i][j]):
                                 stop = max(
-                                    predict_bucketslen[j], self.node_receive_bucket_len[i][j])+1
+                                    predict_bucketslen[j], self.node_receive_bucket_len[i][j])+1-j
                                 if self.buckets[1-j][0:stop]:
                                     self.represent_node.env.put_packet(self.represent_node, self.represent_node.pki.sign(
                                         self.represent_node, Message(self.represent_id, self.buckets[1-j][0:stop])), i)

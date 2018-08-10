@@ -34,7 +34,7 @@ class SynHerdingValidityAttacker:
         for i in range(self.env.get_n()):
             if self.env.check_corrupt(i):
                 continue
-            self.predict_node_belief[i] = 1
+            self.predict_node_belief[i] = self.env.get_input(i)
 
     def bucket_verify(self, bucket):
         belief = -1
@@ -155,18 +155,16 @@ class SynHerdingValidityAttacker:
                         continue
                     for j in range(2):
                         if self.pow_info[(round+1, i, j)] == 1:
-                            if len(self.buckets[1-j]) > max(predict_bucketslen[j], self.node_receive_bucket_len[i][j])+1:
+                            if len(self.buckets[1-j]) >= max(predict_bucketslen[j], self.node_receive_bucket_len[i][j]):
                                 stop = max(
-                                    predict_bucketslen[j], self.node_receive_bucket_len[i][j])+1
-                            else:
-                                stop = len(self.buckets[1-j])
-                            if self.buckets[1-j][0:stop]:
-                                self.env.put_packet(self, self.pki.sign(
-                                    self, Message(myid, self.buckets[1-j][0:stop])), i)
-                                for k in (self.corrupt_node_list):
-                                    if self.buckets[1-j][0:stop]:
-                                        self.env.put_packet(self, self.pki.sign(
-                                            self, Message(myid, (i, self.buckets[1-j][0:stop]))), k)
+                                    predict_bucketslen[j], self.node_receive_bucket_len[i][j])+1-j
+                                if self.buckets[1-j][0:stop]:
+                                    self.env.put_packet(self, self.pki.sign(
+                                        self, Message(myid, self.buckets[1-j][0:stop])), i)
+                                    for k in (self.corrupt_node_list):
+                                        if self.buckets[1-j][0:stop]:
+                                            self.env.put_packet(self, self.pki.sign(
+                                                self, Message(myid, (i, self.buckets[1-j][0:stop]))), k)
         elif round == self.bar-1:
             for i in range(self.env.get_n()):
                 if self.env.check_corrupt(i):

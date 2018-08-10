@@ -9,7 +9,7 @@ from Stat.Stat import *
 from Protocols.HerdingWithBroadcast import *
 from Adversaries.SynHerdingBenchmarkAttacker import *
 def SynHerdingValidityAttackStat():
-    input=50*[1]+50*[0]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+    input=5*[1]+5*[0]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
     k=4
     _lambda_loacl=1
     setting = SynchronousByzantine(10, input, PossibleAdversaries[4],
@@ -17,11 +17,11 @@ def SynHerdingValidityAttackStat():
                                    measure=[ByzValidity,
                                             ByzConsistency, ByzUnanimity],
                                    centralized=True, centralized_adversary=PossibleAdversaries[5], seed=None, _lambda=_lambda_loacl,k=1)
-    f_list=[26,33,38,44,50,55]
+    f_list=[3,4,5,6]
     setting.set_k(k)
     print("k="+str(k))
     print("lambda="+str(_lambda_loacl))
     for f in f_list:
         print("f="+str(f))
         tf=f
-        stat(setting,input,f,tf,_lambda_loacl,10000)
+        stat(setting,input,f,tf,_lambda_loacl,1000)
