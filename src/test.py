@@ -20,10 +20,11 @@ from Adversaries.SynBOSCOValidityAttacker import *
 from Adversaries.SynBOSCOValidityCentralizedAttacker import *
 from Adversaries.SynHerdingValidityAttacker import *
 from Adversaries.SynHerdingCentralizedValidityAttacker import *
+from Adversaries.SynHerdingBenchmarkAttacker import *
 
 PossibleControllers = [SynByzController]
 PossibleAdversaries = [CrashAdversary, HalfHalfSenderAdversary,
-                       SynBOSCOValidityAttacker, SynBOSCOValidityCentralizedAttacker, SynHerdingValidityAttacker,SynHerdingCentralizedValidityAttacker]
+                       SynBOSCOValidityAttacker, SynBOSCOValidityCentralizedAttacker, SynHerdingValidityAttacker,SynHerdingCentralizedValidityAttacker,SynHerdingBenchmarkAttacker]
 
 
 

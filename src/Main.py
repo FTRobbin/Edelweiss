@@ -8,6 +8,7 @@ from Protocols.NaiveVoting import *
 from Protocols.BOSCO import *
 from Protocols.DolevStrong import *
 from Protocols.Herding import *
+from Protocols.HerdingWithBroadcast import *
 from Measures.ByzantineMeasures import *
 from Adversaries.CrashAdversary import *
 from Controllers.SynByzController import *
