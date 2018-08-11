@@ -20,6 +20,7 @@ from Test.Report import *
 from test import *
 from Stat.AdversaryStat import *
 
+
 SettingList=[]
 
 

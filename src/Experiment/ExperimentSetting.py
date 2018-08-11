@@ -82,3 +82,12 @@ class SynchronousByzantine:
 
     def set_k(self, k):
         self.k = k
+    
+    def get_protocol(self):
+        return self.protocol
+    
+    def get_adversary(self):
+        return self.adversary
+    
+    def get_centralized_adversary(self):
+        return self.centralized_adversary

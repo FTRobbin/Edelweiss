@@ -9,6 +9,8 @@ class SynHerdingCentralizedValidityAttacker:
 
     def __init__(self, **kargs):
         self.env = kargs["env"]
+        if self.env.get_f()==0:
+            return        
         self.pki = kargs["pki"]
         self.con = kargs["con"]
         self.pki.register(self)
@@ -49,6 +51,8 @@ class SynHerdingCentralizedValidityAttacker:
         self.represent_node = self.chameleon_dict[self.represent_id]
 
     def run_node(self):
+        if self.env.get_f()==0:
+            return
         self.called += 1
         if (self.called % self.con.f) != 1:
             return
