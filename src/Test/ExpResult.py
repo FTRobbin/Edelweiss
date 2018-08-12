@@ -11,9 +11,11 @@ class ExpResult():
         self.Environment = setting.env_type.name
         self.PKI = setting.pki_type.name
         self.Protocol = setting.protocol.name
-        self.adversary = setting.adversary.name
         if setting.f > 0:
-            self.adversary = setting.adversary.name
+            if setting.get_centralized:
+                self.adversary = setting.centralized_adversary.name
+            else:
+                self.adversary = setting.adversary.name
         self.f = setting.f
         self.tf = setting.tf
         self.n = setting.n
@@ -24,7 +26,7 @@ class ExpResult():
         self._lambda = setting._lambda
         self.seed = setting.seed
         self.mine_results = controller.mine.memory
-
+        self.mine_results = None
         round_history = {}
         round_count = {}
         for r in range(0, controller.round ):
@@ -108,10 +110,10 @@ class ExpResult():
             print(" ")
         if self.mine_results:
             print("Mine Results")
-        for k, v in sorted(self.mine_results.items()):
-            print(k, end=' ')
-            print(self.mine_results[k])
-        print(" ")
+            for k, v in sorted(self.mine_results.items()):
+                print(k, end=' ')
+                print(self.mine_results[k])
+            print(" ")
 
         print("Node Output :")
         for x, y in sorted(self.output.items()):

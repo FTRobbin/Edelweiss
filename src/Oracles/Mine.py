@@ -4,6 +4,8 @@ import sys
 class Mine:
     def __init__(self, _lambda,k,n,seed=None):
         self.memory = {}
+        if _lambda==-1:
+            return
         self.n=n
         random.seed(seed)
         for i in range(k*_lambda*_lambda):  # round

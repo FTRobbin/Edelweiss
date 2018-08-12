@@ -61,6 +61,40 @@ class SynchronousByzantine:
             print("input : %d" % self.input)
         if tf > 0:
             print("num of corruptions : %d" % tf)
+    
+    def __str__(self):
+        current_name=self.protocol.name+str(self.input)+str(self.centralized)
+        if self.tf>0:
+            if self.centralized:
+                current_name+=self.centralized_adversary.name+self.f+self.tf
+            else:
+                current_name+=self.adversary.name+str(self.f)+str(self.tf)
+        return current_name
+
+
+    def set_input(self, input):
+        self.input = input
+
+    def get_input(self):
+        return self.input
+
+    def set_protocol(self, protocol):
+        self.protocol = protocol
+
+    def get_protocol(self):
+        return self.protocol.name
+
+    def set_adversary(self, adversary):
+        self.adversary = adversary
+
+    def get_adversary(self):
+        return self.adversary.name
+
+    def set_centralized_adversary(self, centralized_adversary):
+        self.centralized_adversary = centralized_adversary
+
+    def get_centralized_adversary(self):
+        return self.centralized_adversary.name
 
     def set_n(self, n):
         self.n = n
@@ -82,12 +116,18 @@ class SynchronousByzantine:
 
     def set_k(self, k):
         self.k = k
-    
+
     def get_protocol(self):
         return self.protocol
-    
+
     def get_adversary(self):
         return self.adversary
-    
+
     def get_centralized_adversary(self):
         return self.centralized_adversary
+
+    def set_centralized(self, centralized):
+        self.centralized = centralized
+
+    def get_centralized(self):
+        return self.centralized

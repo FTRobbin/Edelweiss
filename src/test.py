@@ -21,53 +21,60 @@ from Adversaries.SynBOSCOValidityCentralizedAttacker import *
 from Adversaries.SynHerdingValidityAttacker import *
 from Adversaries.SynHerdingCentralizedValidityAttacker import *
 from Adversaries.SynHerdingBenchmarkAttacker import *
-
-PossibleControllers = [SynByzController]
-PossibleAdversaries = [CrashAdversary, HalfHalfSenderAdversary,
-                       SynBOSCOValidityAttacker, SynBOSCOValidityCentralizedAttacker, SynHerdingValidityAttacker,SynHerdingCentralizedValidityAttacker,SynHerdingBenchmarkAttacker]
-
-
+from Test.TestConfig import *
 
 
 def generate_benchmark():
+    
     jsonfile = {}
-    for (name, setting) in SettingList:
-        exp = Experiment(setting)
-        exp.run()
-        res = exp.save_output()
-        jsonfile[res[0]] = res[1]
+    for ProtocolList in TestProtocolsList:
+        
+        for setting in ProtocolList:
+            exp = Experiment(setting)
+            exp.run()
+            res = exp.save_output()
+            jsonfile[res[0]] = res[1]
     serialized = jsonpickle.encode(jsonfile)
     with open("../data/benchmark.json", 'w+') as f:
         print(serialized, file=f)
     print("Benchmark has been successfully generated!!!")
 
 
-def test(settings):
+def test(ProtocolsList):
     with open('../data/benchmark.json', 'r') as f:
         content = f.read()
         data = jsonpickle.decode(content)
     cnt = 0
-    for (name, setting) in settings:
-        exp = Experiment(setting)
-        exp.run()
-        res = exp.save_output()
-        if res[0] not in data.keys():
-            raise RuntimeError
-        current_data = data[res[0]]
-        if not operator.eq(current_data.round_history, res[1].round_history):
-            print("%s test failed on round_history" % name)
-            continue
-        if not operator.eq(current_data.output, res[1].output):
-            print("%s test failed on output" % name)
-            continue
-        cnt += 1
-        print('Test %s passed!' % name)
-    if(cnt == len(settings)):
+    for ProtocolList in ProtocolsList:
+        ProtocolName = [ k for k,v in globals().items() if v is ProtocolList][0]
+        print("testing "+ProtocolName)
+        flag=0
+        for setting in ProtocolList:
+            exp = Experiment(setting)
+            exp.run()
+            res = exp.save_output()
+            if res[0] not in data.keys():
+                raise RuntimeError
+            current_data = data[res[0]]
+            if not operator.eq(current_data.round_history, res[1].round_history):
+                flag=1
+                print("%s test failed on round_history" % str(setting))
+                continue
+            if not operator.eq(current_data.output, res[1].output):
+                flag=1
+                print("%s test failed on output" % str(setting))
+                continue
+        if flag==0:
+            print('Test %s passed!' % ProtocolName)
+            cnt += 1
+        else:
+            print('Test %s failed!' % ProtocolName)
+    if(cnt == len(ProtocolsList)):
         print('All tests passed! (%(numerator)d/%(denumerator)d)' %
               {'numerator': cnt, "denumerator": cnt})
     else:
         print('Some test(s) failed! (%(numerator)d/%(denumerator)d)' %
-              {'numerator': cnt, "denumerator": len(settings)})
+              {'numerator': cnt, "denumerator": len(ProtocolsList)})
 
 
 def main():
@@ -78,8 +85,6 @@ def main():
         print(str(err))  # will print something like "option -a not recognized"
         usage()
         sys.exit(2)
-    output = None
-    verbose = False
     for o, a in opts:
         if o == "-g":
             generate_benchmark()
@@ -94,7 +99,7 @@ def main():
             settings = {}
             if res[0].isdigit():
                 settings = list(filter(lambda x: str(
-                    SettingList.index(x)+1) in res, SettingList))
+                    TestProtocolsList.index(x)+1) in res, TestProtocolsList))
             elif res[0].isalpha():
                 pass
             else:
@@ -103,7 +108,7 @@ def main():
             sys.exit()
         else:
             assert False, "unhandled option"
-    test(SettingList)
+    test(TestProtocolsList)
 
 
 def usage():
