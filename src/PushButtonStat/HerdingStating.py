@@ -42,7 +42,8 @@ def HerdingStatingAll(times=1):
     f_list = [20, 25, 30, 35, 40, 45, 50, 55, 60]
     HerdingStating(h, input, times, _lambda_list, k_list, protocol_list, adversary_list, f_list)
     # Experiment 4: Lambda
-    _lambda_list = [4, 6, 8]
+    _lambda_list = [3, 4, 5]
+    adversary_list = [PossibleAdversaries[7]]
     k_list = [10]
     HerdingStating(h, input, times, _lambda_list, k_list, protocol_list, adversary_list, f_list)
     h.close()
