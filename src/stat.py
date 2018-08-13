@@ -3,7 +3,7 @@ from PushButtonStat.HerdingStating import *
 # stat_list=[HerdingStat]
 
 def main():
-    HerdingStating()
+    HerdingStatingAll()
 
 if __name__ == "__main__":
     main()

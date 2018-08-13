@@ -2,8 +2,8 @@ from Messages.Message import Message
 from Util.Util import *
 
 
-class HerdingWithBroadcast:
-    name = "Herding Protocol with Broadcast"
+class HerdingWithBroadcastFast:
+    name = "Herding Protocol with Broadcast Fast"
 
     def __init__(self, **kargs):
 
@@ -17,10 +17,9 @@ class HerdingWithBroadcast:
         self.bar = self.env.get_k() * self._lambda * self._lambda
         self.my_mine = kargs["mine"]
 
-    def bucket_verify(self, bucket):
+    def bucket_verify(self, bucket, current_round):
         belief = -1
         round = -1
-        current_round = self.env.get_round()
         for block in bucket:
             if belief == -1:
                 belief = block.belief
@@ -46,16 +45,13 @@ class HerdingWithBroadcast:
             msgs = self.env.get_input_msgs(self)
             bucket_lens = [len(self.buckets[0]), len(self.buckets[1])]
             for msg in msgs:
-                if (not self.pki.verify(msg)):
-                    self.pki.verify(msg)
+                if not self.pki.verify(msg):
                     raise RuntimeError
                 bucket = msg.get_extraction()
-                if not bool(bucket):
-                    bool(bucket)
+                if not bucket:
                     raise RuntimeError
-                if self.bucket_verify(bucket):
-                    if bucket:
-                        self.buckets[bucket[0].belief] = max(self.buckets[bucket[0].belief],bucket.copy(),key=lambda x:len(x))
+                if self.bucket_verify(bucket, round) and len(bucket) > len(self.buckets[bucket[0].belief]):
+                    self.buckets[bucket[0].belief] = bucket
             l0 = len(self.buckets[0])
             l1 = len(self.buckets[1])
             if  l0 != 0 or l1 != 0:
@@ -70,9 +66,9 @@ class HerdingWithBroadcast:
             if my_pow:
                 new_block = self.pki.sign(
                     self, Block(round, myid, self.belief))
+                self.buckets[self.belief] = self.buckets[self.belief].copy()
                 self.buckets[self.belief].append(new_block)
-            for bucket in self.buckets:
-                if bucket:
-                    if len(bucket)>bucket_lens[bucket[0].belief]:
-                        self.env.put_broadcast(self, self.pki.sign(
-                            self, Message(myid, bucket.copy(), round)))
+            for i in range(2):
+                if len(self.buckets[i]) > bucket_lens[i]:
+                    self.env.put_broadcast(self, self.pki.sign(
+                        self, Message(myid, self.buckets[i], round)))

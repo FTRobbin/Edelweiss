@@ -15,10 +15,11 @@ from Adversaries.SynBOSCOValidityCentralizedAttacker import *
 from Adversaries.SynHerdingValidityAttacker import *
 from Adversaries.SynHerdingCentralizedValidityAttacker import *
 from Adversaries.SynHerdingBenchmarkAttacker import *
+from Adversaries.SynHerdingAgreementFast import *
 
 PossibleControllers = [SynByzController]
 PossibleAdversaries = [CrashAdversary, HalfHalfSenderAdversary,
-                       SynBOSCOValidityAttacker, SynBOSCOValidityCentralizedAttacker, SynHerdingValidityAttacker, SynHerdingCentralizedValidityAttacker, SynHerdingBenchmarkAttacker]
+                       SynBOSCOValidityAttacker, SynBOSCOValidityCentralizedAttacker, SynHerdingValidityAttacker, SynHerdingCentralizedValidityAttacker, SynHerdingBenchmarkAttacker, SynHerdingAgreementFast]
 
 #################### Navie Voting Begin #########################
 #################### Navie Voting Begin #########################

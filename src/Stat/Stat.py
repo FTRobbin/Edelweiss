@@ -4,7 +4,6 @@ from test import *
 from Adversaries.SynHerdingBenchmarkAttacker import *
 from Experiment.Experiment import *
 from Experiment.ExperimentSetting import *
-from Protocols.HerdingWithBroadcast import *
 from Test.Report import *
 from Util.Util import *
 
@@ -14,9 +13,9 @@ def AtomicStat(f,setting, times):
     stat_dict = {'Consistency': 0, 'Validity': 0, 'Unanimity': 0}
     for i in range(times):
         setting.set_seed(i)
-        if times == 1:
-            run_and_print(setting)
-            return
+        # if times == 1:
+        #     run_and_print(setting)
+        #     return
         res = run_and_get_result(setting)
         for k, v in stat_dict.items():
             if not res[k]:
@@ -24,7 +23,8 @@ def AtomicStat(f,setting, times):
     for k, v in stat_dict.items():
         stat_dict[k] = v/times
     print(stat_dict,file=f)
-    f.flush()
+    if f:
+        f.flush()
 
 # set parameter and run
 def SetStatParaAndRun(_file,setting, input, times, f, tf, protocol, adversary, _lambda=1, k=1, centralized=True):
