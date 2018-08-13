@@ -30,7 +30,7 @@ def HerdingStatingAll(times=1):
     protocol_list = [Herding]
     adversary_list = [PossibleAdversaries[5]]
     _lambda_list = [2]
-    k_list = [5, 10, 15]
+    k_list = [5, 10, 15, 20, 25, 30]
     f_list = [20]
     HerdingStating(h, input, times, _lambda_list, k_list, protocol_list, adversary_list, f_list)
     # Experiment 2: Round, F, Bruteforce
@@ -38,7 +38,6 @@ def HerdingStatingAll(times=1):
     protocol_list = [HerdingWithBroadcastFast]
     adversary_list = [PossibleAdversaries[6], PossibleAdversaries[7]]
     _lambda_list = [2]
-    k_list = [5, 10, 15, 20, 25, 30]
     f_list = [20, 25, 30, 35, 40, 45, 50, 55, 60]
     HerdingStating(h, input, times, _lambda_list, k_list, protocol_list, adversary_list, f_list)
     # Experiment 4: Lambda
