@@ -1,0 +1,18 @@
+protocol=Herding Protocol
+Centralized adversary!
+centralized_adversary=Synchronous Herding Centralized Agreement Attacker
+times=100
+k=5
+lambda=2
+f=20
+tf=20
+{'Unanimity': 0.0, 'Consistency': 0.32, 'Validity': 0.0}
+ 
+protocol=Herding Protocol
+Centralized adversary!
+centralized_adversary=Synchronous Herding Centralized Agreement Attacker
+times=100
+k=10
+lambda=2
+f=20
+tf=20
