@@ -1,8 +1,8 @@
 from Messages.Message import *
 
 
-class SynBOSCOValidityCentralizedAttacker:
-    name = "Synchronous BOSCO Validity centralized Attacker"
+class SynBOSCOAgreementCentralizedAttacker:
+    name = "Synchronous BOSCO Agreement centralized Attacker"
     SENDER = 0
 
     def __init__(self, **kargs):

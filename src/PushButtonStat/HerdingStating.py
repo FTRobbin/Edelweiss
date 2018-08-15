@@ -51,15 +51,15 @@ def HerdingStatingAll(times=1):
     f_list = [20, 25, 30, 35, 40, 45, 50, 55, 60]
     HerdingStating(h, input, times, _lambda_list, k_list, protocol_list, adversary_list, f_list)
     # Experiment 4: Lambda
-    _lambda_list=[3,4,5]
-    para_setting_list=[]
-    for _lambda in _lambda_list:
-        for f in f_list:
-            k=int(100/(_lambda*_lambda))
-            tf=f
-            # h, setting, input, times, f, tf, protocol, adversary, _lambda, k)
-            para_setting=(input,times,f,tf,HerdingWithBroadcastFast,PossibleAdversaries[7],_lambda,k)
-            para_setting_list.append(para_setting)
-    CustomizedHerdingStating(h,para_setting_list)
+    # _lambda_list=[3,4,5]
+    # para_setting_list=[]
+    # for _lambda in _lambda_list:
+    #     for f in f_list:
+    #         k=int(100/(_lambda*_lambda))
+    #         tf=f
+    #         # h, setting, input, times, f, tf, protocol, adversary, _lambda, k)
+    #         para_setting=(input,times,f,tf,HerdingWithBroadcastFast,PossibleAdversaries[7],_lambda,k)
+    #         para_setting_list.append(para_setting)
+    # CustomizedHerdingStating(h,para_setting_list)
     h.close()
 

@@ -4,8 +4,8 @@ from Messages.Message import Message
 from Util.Util import *
 
 
-class SynHerdingCentralizedValidityAttacker:
-    name = "Synchronous Herding Centralized Validity Attacker"
+class SynHerdingCentralizedAgreementAttacker:
+    name = "Synchronous Herding Centralized Agreement Attacker"
 
     def __init__(self, **kargs):
         self.env = kargs["env"]

@@ -16,10 +16,10 @@ from Adversaries.CrashAdversary import *
 from Controllers.SynByzController import *
 from Controllers.SynByzController import *
 from Adversaries.HalfHalfSenderAdversary import *
-from Adversaries.SynBOSCOValidityAttacker import *
-from Adversaries.SynBOSCOValidityCentralizedAttacker import *
-from Adversaries.SynHerdingValidityAttacker import *
-from Adversaries.SynHerdingCentralizedValidityAttacker import *
+from Adversaries.SynBOSCOAgreementAttacker import *
+from Adversaries.SynBOSCOAgreementCentralizedAttacker import *
+from Adversaries.SynHerdingAgreementAttacker import *
+from Adversaries.SynHerdingCentralizedAgreementAttacker import *
 from Adversaries.SynHerdingBenchmarkAttacker import *
 from Test.TestConfig import *
 

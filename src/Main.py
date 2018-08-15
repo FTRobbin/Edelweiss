@@ -14,8 +14,8 @@ from Adversaries.CrashAdversary import *
 from Controllers.SynByzController import *
 from Controllers.SynByzController import *
 from Adversaries.HalfHalfSenderAdversary import *
-from Adversaries.SynBOSCOValidityAttacker import *
-from Adversaries.SynBOSCOValidityCentralizedAttacker import *
+from Adversaries.SynBOSCOAgreementAttacker import *
+from Adversaries.SynBOSCOAgreementCentralizedAttacker import *
 from Test.Report import *
 from test import *
 
