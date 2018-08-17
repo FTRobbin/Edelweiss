@@ -13,13 +13,11 @@ from Protocols.DolevStrong import *
 from Protocols.Herding import *
 from Measures.ByzantineMeasures import *
 from Adversaries.CrashAdversary import *
-from Controllers.SynByzController import *
-from Controllers.SynByzController import *
+from Controllers.SynController import *
+from Controllers.SynController import *
 from Adversaries.HalfHalfSenderAdversary import *
 from Adversaries.SynBOSCOAgreementAttacker import *
 from Adversaries.SynBOSCOAgreementCentralizedAttacker import *
-from Adversaries.SynHerdingAgreementAttacker import *
-from Adversaries.SynHerdingCentralizedAgreementAttacker import *
 from Adversaries.SynHerdingBenchmarkAttacker import *
 from Test.TestConfig import *
 

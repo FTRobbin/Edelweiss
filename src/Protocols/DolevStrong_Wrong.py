@@ -1,11 +1,12 @@
 from Messages.Message import Message
+from Protocols.DolevStrong import *
 
+class DolevStrong_Wrong:
 
-class DolevStrong:
-
-    name = "Dolev-Strong Protocol"
+    name = "Dolev-Strong Protocol (Wrongly Modified)"
     SENDER = 0
 
+    
     def __init__(self, **kargs):
         self.env = kargs["env"]
         self.pki = kargs["pki"]
@@ -30,6 +31,7 @@ class DolevStrong:
             return False
         return True
 
+
     def run_node(self):
         round = self.env.get_round()
         myid = self.env.get_id(self)
@@ -38,7 +40,7 @@ class DolevStrong:
                 self.input = self.env.get_input(self)
                 self.env.put_broadcast(self, self.pki.sign(self, Message(myid, self.input)))
                 self.seen[self.input] = True
-        elif 1 <= round <= self.env.get_tf() + 1:
+        elif 1 <= round <= self.env.get_tf():
             msgs = self.env.get_input_msgs(self)
             for msg in msgs:
                 if self.pki.verify(msg) and self.my_verify(round, msg):
@@ -46,10 +48,10 @@ class DolevStrong:
                     if (b == 0 or b == 1) and not self.seen[b]:
                         self.seen[b] = True
                         self.env.put_broadcast(self, self.pki.sign(self, Message(myid, msg)))
-            if round == self.env.get_tf() + 1:
+            if round == self.env.get_tf():
                 if self.seen[1] and not self.seen[0]:
                     self.env.put_output(self, 1)
                 else:
                     self.env.put_output(self, 0)
         else:
-            raise RuntimeError
+            raise RuntimeErro

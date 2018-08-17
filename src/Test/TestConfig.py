@@ -5,21 +5,21 @@ from Protocols.NaiveVoting import *
 from Protocols.BOSCO import *
 from Protocols.DolevStrong import *
 from Protocols.Herding import *
+from Protocols.HerdingWithBroadcastFast import *
+from Protocols.DolevStrong_Wrong import *
 from Measures.ByzantineMeasures import *
 from Adversaries.CrashAdversary import *
-from Controllers.SynByzController import *
-from Controllers.SynByzController import *
+from Controllers.SynController import *
 from Adversaries.HalfHalfSenderAdversary import *
 from Adversaries.SynBOSCOAgreementAttacker import *
 from Adversaries.SynBOSCOAgreementCentralizedAttacker import *
-from Adversaries.SynHerdingAgreementAttacker import *
-from Adversaries.SynHerdingCentralizedAgreementAttacker import *
 from Adversaries.SynHerdingBenchmarkAttacker import *
 from Adversaries.SynHerdingAgreementFast import *
+from Adversaries.DolevStrongRoundAdversary import *
 
-PossibleControllers = [SynByzController]
+PossibleControllers = [SynController]
 PossibleAdversaries = [CrashAdversary, HalfHalfSenderAdversary,
-                       SynBOSCOAgreementAttacker, SynBOSCOAgreementCentralizedAttacker, SynHerdingAgreementAttacker, SynHerdingCentralizedAgreementAttacker, SynHerdingBenchmarkAttacker, SynHerdingAgreementFast]
+                       SynBOSCOAgreementAttacker, SynBOSCOAgreementCentralizedAttacker, SynHerdingBenchmarkAttacker, SynHerdingAgreementFast,DolevStrongRoundAdversary]
 
 #################### Navie Voting Begin #########################
 #################### Navie Voting Begin #########################
@@ -39,13 +39,13 @@ NaiveVotingTestList = [SynchronousByzantine(10, 1, PossibleAdversaries[2],
         3],
     has_sender=True, corrupt_sender=False),  # Navie Voting 2
 
-    SynchronousByzantine(5, 1, PossibleAdversaries[2],
-                         PossibleControllers[0], f=0, tf=0, protocol=NaiveVoting,
-                         measure=[ByzValidity,
-                                  ByzConsistency, ByzUnanimity],
-                         centralized=False, centralized_adversary=PossibleAdversaries[
-        3],
-    has_sender=True, corrupt_sender=False),  # Navie Voting 3
+        SynchronousByzantine(5, 1, PossibleAdversaries[1],
+                                        PossibleControllers[0], f=0, tf=0, protocol=NaiveVoting,
+                                        measure=[ByzValidity,
+                                                 ByzConsistency, ByzUnanimity],
+                                        centralized=False, centralized_adversary=PossibleAdversaries[
+        0],
+    has_sender=False, corrupt_sender=False),  # Navie Voting 3
 
 
 
@@ -57,13 +57,13 @@ NaiveVotingTestList = [SynchronousByzantine(10, 1, PossibleAdversaries[2],
         3],
     has_sender=True, corrupt_sender=False),  # Navie Voting 4
 
-    SynchronousByzantine(20, 1, PossibleAdversaries[2],
-                         PossibleControllers[0], f=0, tf=0, protocol=NaiveVoting,
-                         measure=[ByzValidity,
-                                  ByzConsistency, ByzUnanimity],
-                         centralized=False, centralized_adversary=PossibleAdversaries[
-        3],
-    has_sender=True, corrupt_sender=False)]  # Navie Voting 5
+    SynchronousByzantine(5, 1, PossibleAdversaries[1],
+                                        PossibleControllers[0], f=1, tf=1, protocol=NaiveVoting,
+                                        measure=[ByzValidity,
+                                                 ByzConsistency, ByzUnanimity],
+                                        centralized=False, centralized_adversary=PossibleAdversaries[
+        0],
+    has_sender=True, corrupt_sender=True)]  # Navie Voting 5
 #################### Navie Voting End #########################
 #################### Navie Voting End #########################
 #################### Navie Voting End #########################
@@ -137,34 +137,41 @@ DolevStrongTestList = [SynchronousByzantine(10, 1, PossibleAdversaries[2],
                                             centralized=False, centralized_adversary=PossibleAdversaries[
     3],
     has_sender=True, corrupt_sender=False),
-    SynchronousByzantine(10, 0, PossibleAdversaries[2],
-                         PossibleControllers[0], f=0, tf=0, protocol=DolevStrong,
-                         measure=[ByzValidity,
-                                  ByzConsistency, ByzUnanimity],
-                         centralized=False, centralized_adversary=PossibleAdversaries[
-        3],
+    SynchronousByzantine(5, 1, PossibleAdversaries[0],
+                                        PossibleControllers[0], f=0, tf=0, protocol=DolevStrong,
+                                        measure=[ByzValidity,
+                                                 ByzConsistency, ByzUnanimity],
+                                        centralized=False, centralized_adversary=PossibleAdversaries[
+        0],
     has_sender=True, corrupt_sender=False),
-    SynchronousByzantine(20, 1, PossibleAdversaries[2],
-                         PossibleControllers[0], f=0, tf=0, protocol=DolevStrong,
-                         measure=[ByzValidity,
-                                  ByzConsistency, ByzUnanimity],
-                         centralized=False, centralized_adversary=PossibleAdversaries[
-        3],
+    SynchronousByzantine(5, 1, PossibleAdversaries[0],
+                                        PossibleControllers[0], f=2, tf=2, protocol=DolevStrong,
+                                        measure=[ByzValidity,
+                                                 ByzConsistency, ByzUnanimity],
+                                        centralized=False, centralized_adversary=PossibleAdversaries[
+        0],
     has_sender=True, corrupt_sender=False),
-    SynchronousByzantine(20, 0, PossibleAdversaries[2],
-                         PossibleControllers[0], f=0, tf=0, protocol=DolevStrong,
-                         measure=[ByzValidity,
-                                  ByzConsistency, ByzUnanimity],
-                         centralized=False, centralized_adversary=PossibleAdversaries[
-        3],
-    has_sender=True, corrupt_sender=False),
-    SynchronousByzantine(20, 1, PossibleAdversaries[2],
-                         PossibleControllers[0], f=0, tf=0, protocol=DolevStrong,
-                         measure=[ByzValidity,
-                                  ByzConsistency, ByzUnanimity],
-                         centralized=False, centralized_adversary=PossibleAdversaries[
-        3],
-    has_sender=True, corrupt_sender=False)]
+    SynchronousByzantine(5, 1, PossibleAdversaries[0],
+                                        PossibleControllers[0], f=1, tf=1, protocol=DolevStrong,
+                                        measure=[ByzValidity,
+                                                 ByzConsistency, ByzUnanimity],
+                                        centralized=False, centralized_adversary=PossibleAdversaries[
+        0],
+    has_sender=True, corrupt_sender=True),
+   SynchronousByzantine(5, 1, PossibleAdversaries[1],
+                                        PossibleControllers[0], f=1, tf=1, protocol=DolevStrong,
+                                        measure=[ByzValidity,
+                                                 ByzConsistency, ByzUnanimity],
+                                        centralized=False, centralized_adversary=PossibleAdversaries[
+        0],
+    has_sender=True, corrupt_sender=True),
+    SynchronousByzantine(5, 1, PossibleAdversaries[6],
+                                        PossibleControllers[0], f=3, tf=3, protocol=DolevStrong_Wrong,
+                                        measure=[ByzValidity,
+                                                 ByzConsistency, ByzUnanimity],
+                                        centralized=False, centralized_adversary=PossibleAdversaries[
+        0],
+    has_sender=True, corrupt_sender=True)]
 #################### DolevString End  #########################
 #################### DolevString End  #########################
 #################### DolevString End  #########################
@@ -174,7 +181,7 @@ DolevStrongTestList = [SynchronousByzantine(10, 1, PossibleAdversaries[2],
 #################### Herding Start  #########################
 HerdingTestListTestList = [SynchronousByzantine(10, [0, 0, 0, 0, 1, 1, 1, 0, 1, 1,
                                                      ], PossibleAdversaries[3],
-                                                PossibleControllers[0], f=0, tf=0, protocol=Herding,
+                                                PossibleControllers[0], f=0, tf=0, protocol=HerdingWithBroadcastFast,
                                                 measure=[ByzValidity,
                                                          ByzConsistency, ByzUnanimity],
                                                 centralized=False, centralized_adversary=PossibleAdversaries[3], seed=0, _lambda=3)]
@@ -186,10 +193,15 @@ HerdingTestListTestList = [SynchronousByzantine(10, [0, 0, 0, 0, 1, 1, 1, 0, 1, 
 #################### Herding Agreement Attack Start  #########################
 #################### Herding Agreement Attack Start  #########################
 HerdingAgreementAttackTestList = [SynchronousByzantine(10, [1, 1, 1, 1, 1, 0, 0, 0, 0, 0], PossibleAdversaries[4],
-                                                      PossibleControllers[0], f=5, tf=5, protocol=Herding,
+                                                      PossibleControllers[0], f=5, tf=5, protocol=HerdingWithBroadcastFast,
                                                       measure=[ByzValidity,
                                                                ByzConsistency, ByzUnanimity],
-                                                      centralized=False, centralized_adversary=PossibleAdversaries[3], seed=4, _lambda=4, k=4)
+                                                      centralized=True, centralized_adversary=PossibleAdversaries[4], seed=4, _lambda=4, k=4)
+                                 ,SynchronousByzantine(10, [1, 1, 1, 1, 1, 0, 0, 0, 0, 0], PossibleAdversaries[5],
+                                                      PossibleControllers[0], f=5, tf=5, protocol=HerdingWithBroadcastFast,
+                                                      measure=[ByzValidity,
+                                                               ByzConsistency, ByzUnanimity],
+                                                      centralized=True, centralized_adversary=PossibleAdversaries[5], seed=4, _lambda=4, k=4)
                                  ]
 #################### Herding Agreement Attack End  #########################
 #################### Herding Agreement Attack End  #########################
@@ -232,13 +244,55 @@ demoProtocols = [SynchronousByzantine(10, 1, PossibleAdversaries[2],
     has_sender=True, corrupt_sender=False),
     SynchronousByzantine(10, [0, 0, 0, 0, 1, 1, 1, 0, 1, 1,
                                                      ], PossibleAdversaries[3],
-                                                PossibleControllers[0], f=0, tf=0, protocol=Herding,
+                                                PossibleControllers[0], f=0, tf=0, protocol=HerdingWithBroadcastFast,
                                                 measure=[ByzValidity,
                                                          ByzConsistency, ByzUnanimity],
                                                 centralized=False, centralized_adversary=PossibleAdversaries[3], seed=0,k=4, _lambda=3),
     SynchronousByzantine(10, [1, 1, 1, 1, 1, 0, 0, 0, 0, 0], PossibleAdversaries[4],
-                                                      PossibleControllers[0], f=5, tf=5, protocol=Herding,
+                                                      PossibleControllers[0], f=5, tf=5, protocol=HerdingWithBroadcastFast,
                                                       measure=[ByzValidity,
                                                                ByzConsistency, ByzUnanimity],
-                                                      centralized=False, centralized_adversary=PossibleAdversaries[3], seed=4, _lambda=4, k=4)
+                                                      centralized=True, centralized_adversary=PossibleAdversaries[5], seed=4, _lambda=4, k=4),
+    SynchronousByzantine(5, 1, PossibleAdversaries[1],
+                                        PossibleControllers[0], f=0, tf=0, protocol=NaiveVoting,
+                                        measure=[ByzValidity,
+                                                 ByzConsistency, ByzUnanimity],
+                                        centralized=False, centralized_adversary=PossibleAdversaries[
+        0],
+    has_sender=True, corrupt_sender=False),
+    SynchronousByzantine(5, 1, PossibleAdversaries[0],
+                                        PossibleControllers[0], f=0, tf=0, protocol=DolevStrong,
+                                        measure=[ByzValidity,
+                                                 ByzConsistency, ByzUnanimity],
+                                        centralized=False, centralized_adversary=PossibleAdversaries[
+        0],
+    has_sender=True, corrupt_sender=False),
+    SynchronousByzantine(5, 1, PossibleAdversaries[0],
+                                        PossibleControllers[0], f=1, tf=1, protocol=DolevStrong,
+                                        measure=[ByzValidity,
+                                                 ByzConsistency, ByzUnanimity],
+                                        centralized=False, centralized_adversary=PossibleAdversaries[
+        0],
+    has_sender=True, corrupt_sender=True),
+    SynchronousByzantine(5, 1, PossibleAdversaries[1],
+                                        PossibleControllers[0], f=1, tf=1, protocol=DolevStrong,
+                                        measure=[ByzValidity,
+                                                 ByzConsistency, ByzUnanimity],
+                                        centralized=False, centralized_adversary=PossibleAdversaries[
+        0],
+    has_sender=True, corrupt_sender=True),
+    SynchronousByzantine(5, 1, PossibleAdversaries[1],
+                                        PossibleControllers[0], f=1, tf=1, protocol=NaiveVoting,
+                                        measure=[ByzValidity,
+                                                 ByzConsistency, ByzUnanimity],
+                                        centralized=False, centralized_adversary=PossibleAdversaries[
+        0],
+    has_sender=True, corrupt_sender=True),
+    SynchronousByzantine(5, 1, PossibleAdversaries[6],
+                                        PossibleControllers[0], f=3, tf=3, protocol=DolevStrong_Wrong,
+                                        measure=[ByzValidity,
+                                                 ByzConsistency, ByzUnanimity],
+                                        centralized=False, centralized_adversary=PossibleAdversaries[
+        0],
+    has_sender=True, corrupt_sender=True)
                                  ]

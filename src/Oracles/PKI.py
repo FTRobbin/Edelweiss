@@ -1,6 +1,4 @@
 import random
-from Messages.Message import Message
-from Protocols.Herding import Block
 
 
 class IdealPKI:
@@ -31,3 +29,5 @@ class IdealPKI:
             return info.__str__() in self.msg_mem
         elif type(info) is Block:
             return info.__str__() in self.block_mem
+from Messages.Message import Message
+from Protocols.Herding import Block

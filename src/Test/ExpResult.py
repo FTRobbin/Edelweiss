@@ -12,7 +12,7 @@ class ExpResult():
         self.PKI = setting.pki_type.name
         self.Protocol = setting.protocol.name
         if setting.f > 0:
-            if setting.get_centralized:
+            if setting.get_centralized():
                 self.adversary = setting.centralized_adversary.name
             else:
                 self.adversary = setting.adversary.name
@@ -30,7 +30,6 @@ class ExpResult():
         round_history = {}
         round_count = {}
         for r in range(0, controller.round ):
-            # print("Round %d : " % r)
             round_history[str(r)] = []
             round_count[str(r)] = []
             d = {}
@@ -57,7 +56,6 @@ class ExpResult():
                 controller)[1]
 
     def object_key(self):
-        # m = hashlib.sha256(.encode('utf-8'))
         arg = self.experiment_type + self.PKI + self.Protocol + self.Environment + \
             str(self.input) + str(self.n) + str(self.f)+str(self.tf) + \
             str(self.centralized) + str(self.has_sender)
@@ -67,8 +65,6 @@ class ExpResult():
             arg = arg+str(self._lambda)
             arg = arg+str(self.seed)
         arg.encode('utf-8')
-        # hashlib.sha256((arg.encode('utf-8'))).hexdigest()
-        # m.update(arg)
         return hashlib.sha256((arg.encode('utf-8'))).hexdigest()
 
     def print(self):
@@ -122,7 +118,7 @@ class ExpResult():
         flag = 0
         print("Measurements:")
         for k, v in self.measures.items():
-            if(v == True):
+            if(v != False):
                 flag += 1
             print(k, end=': ')
             print(v)

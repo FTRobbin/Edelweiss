@@ -19,7 +19,6 @@ class SynBOSCOAgreementAttacker:
             for i in range(0, self.env.get_f()):
                 self.env.put_packet(self, self.pki.sign(
                     self, Message(myid, self.attack_value)), i)
-                # self.env.put_packet(self, Message(myid, self.attack_value), i)
             for i in range(self.env.get_f(), self.env.get_n()):
                 self.env.put_packet(self, self.pki.sign(
                     self, Message(myid, 1 - self.attack_value)), i)

@@ -25,14 +25,4 @@ class Block:
         return self.id
 
 
-def run_and_print(setting):
-    exp = Experiment(setting)
-    exp.run()
-    res = exp.save_output()
-    res[1].print()
 
-
-def run_and_get_result(setting):
-    exp = Experiment(setting)
-    exp.run()
-    return exp.get_result()

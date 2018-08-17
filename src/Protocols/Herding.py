@@ -66,15 +66,11 @@ class Herding:
                     self.buckets[bucket_list[0][0].belief] = max(bucket_list, key=lambda x: len(x))
             l0 = len(self.buckets[0])
             l1 = len(self.buckets[1])
-            # print("round %d : id %d belief %d" % (round + 1, myid, self.belief))
             if  l0 != 0 or l1 != 0:
-                # if l0 > l1 or ((l0 == l1) and random.choice([True, False])):
                 if (l0 > l1) or (l0 == l1):
                     self.belief = 0
-                    # print("round %d : id %d belief 0" % (round + 1, myid))
                 else:
                     self.belief = 1
-                    # print("round %d : id %d belief 1" % (round + 1, myid))
             if round == self.bar:
                 self.env.put_output(self, self.belief)
                 return

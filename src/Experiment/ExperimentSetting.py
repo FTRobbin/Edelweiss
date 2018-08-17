@@ -1,5 +1,4 @@
-from Controllers.SynByzController import *
-from Controllers.SynByzController import *
+from Controllers.SynController import *
 from Environments.Environment import *
 from Oracles.PKI import *
 from Adversaries import *

@@ -2,8 +2,8 @@ from Util.Util import *
 from Oracles.Mine import Mine
 
 
-class SynByzController:
-    name = "Synchronous Byzantine Controller"
+class SynController:
+    name = "Synchronous Controller"
 
     def __init__(self, setting):
         self.n = setting.n
@@ -93,7 +93,6 @@ class SynByzController:
                       (k[0], k[1], d[k]))
         for k,v in sorted(self.mine.memory.items()):
             print(k, end=' ')
-            # for v in self.mine.memory[k]:
             print(self.mine.memory[k])
 
         print(" ")

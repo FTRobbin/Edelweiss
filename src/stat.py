@@ -1,9 +1,8 @@
-from PushButtonStat.HerdingStating import *
+from ExperimentExample.HerdingStat import *
 
-# stat_list=[HerdingStat]
 
 def main():
-    HerdingStatingAll(100)
+    HerdingStat(1)
 
 if __name__ == "__main__":
     main()
