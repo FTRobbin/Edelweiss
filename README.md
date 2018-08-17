@@ -24,7 +24,7 @@ middle and final results of the running of the protocol and analysis the vulnera
 
 | File | Description |
 | --- | --- |
-| [SynController.py](../master/src/ExperimentExample/HerdingStat.py) | Synchronous controller that controls the running of the protocol|
+| [SynController.py](../master/src/Controllers/SynController.py) | Synchronous controller that controls the running of the protocol|
 
 ### Protocols
 
@@ -109,7 +109,7 @@ To test a specific protocol,run
 python3 test.py -i protocol_num
 ```
 
-proticol_num is the index of the prototol in variable TestProtocolsList in file TestConfig(../master/src/Test/TestConfig.py) 
+proticol_num is the index of the prototol in variable TestProtocolsList in file [TestConfig](../master/src/Test/TestConfig.py) 
 
 ---
 
