@@ -1,13 +1,10 @@
 from Controllers.SynController import *
-from Environments.Environment import *
+from Environments.SynEnvironment import *
 from Oracles.PKI import *
 from Adversaries import *
 
 
-class ExperimentSetting:
-    def __init__(self):
-        # TODO
-        pass
+
 
 
 class SynchronousByzantine:
@@ -23,7 +20,7 @@ class SynchronousByzantine:
         self.tf = tf
         self.adversary = adversary
         self.con_type = controller
-        self.env_type = SynByzEnvironment
+        self.env_type = SynEnvironment
         self.pki_type = IdealPKI
         self.protocol = protocol
         self.centralized = centralized
@@ -36,10 +33,7 @@ class SynchronousByzantine:
         self.k = k
 
     def clone(self):
-        ret = SynchronousByzantine(
-            self.n, self.input, self.f, self.corrupt_sender, self.protocol, self.measure)
-        ret.adversary = self.adversary
-        return ret
+        raise NotImplementedError
 
     def report(self):
         tf = self.f
@@ -80,9 +74,6 @@ class SynchronousByzantine:
     def set_protocol(self, protocol):
         self.protocol = protocol
 
-    def get_protocol(self):
-        return self.protocol.name
-
     def set_adversary(self, adversary):
         self.adversary = adversary
 
@@ -98,8 +89,6 @@ class SynchronousByzantine:
     def set_n(self, n):
         self.n = n
 
-    def set_input(self, input):
-        self.input = input
 
     def set_f(self, f):
         self.f = f
@@ -116,14 +105,7 @@ class SynchronousByzantine:
     def set_k(self, k):
         self.k = k
 
-    def get_protocol(self):
-        return self.protocol
 
-    def get_adversary(self):
-        return self.adversary
-
-    def get_centralized_adversary(self):
-        return self.centralized_adversary
 
     def set_centralized(self, centralized):
         self.centralized = centralized

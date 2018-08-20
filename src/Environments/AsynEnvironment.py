@@ -1,6 +1,6 @@
-class SynByzEnvironment:
+class AsynEnvironment:
 
-    name = "Synchronous Byzantine Environment"
+    name = "Asynchronous Environment"
 
     def __init__(self, con):
         self.controller = con
@@ -28,9 +28,12 @@ class SynByzEnvironment:
 
     def get_input_msgs(self, sk):
         return self.controller.get_message_buffer(sk)
+    
+    def drain_message_buffer(self,sk):
+        return self.controller.drain_message_buffer(sk)
 
-    def put_broadcast(self, sk, msg):
-        self.controller.put_broadcast(msg)
+    def put_broadcast(self, sk,id, msg):
+        self.controller.put_broadcast(id,msg)
 
     def put_packet(self, sk, msg, target):
         self.controller.put_packet(msg, target)

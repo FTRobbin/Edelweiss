@@ -25,31 +25,32 @@ class ExpResult():
         self.has_sender = setting.has_sender
         self._lambda = setting._lambda
         self.seed = setting.seed
-        self.mine_results = controller.mine.memory
         self.mine_results = None
-        round_history = {}
-        round_count = {}
-        for r in range(0, controller.round ):
-            round_history[str(r)] = []
-            round_count[str(r)] = []
-            d = {}
-            for packet in sorted(controller.message_history[r], key=lambda x: x[1].get_sender()):
-                round_history[str(r)].append(
-                    (packet[1].get_sender(), packet[0], str(packet[1])))
-                key = (packet[0], str(packet[1]))
-                if key not in d:
-                    d[key] = 0
-                d[key] = d[key] + 1
-            round_history[str(r)] = sorted(round_history[str(r)])
+        self.round=None
+        if controller.round:
+            round_history = {}
+            round_count = {}
+            for r in range(0, controller.round ):
+                round_history[str(r)] = []
+                round_count[str(r)] = []
+                d = {}
+                for packet in sorted(controller.message_history[r], key=lambda x: x[1].get_sender()):
+                    round_history[str(r)].append(
+                        (packet[1].get_sender(), packet[0], str(packet[1])))
+                    key = (packet[0], str(packet[1]))
+                    if key not in d:
+                        d[key] = 0
+                    d[key] = d[key] + 1
+                round_history[str(r)] = sorted(round_history[str(r)])
 
-            for k in sorted(d):
-                round_count[str(r)].append((k[0], k[1], d[k]))
-        self.round_history = round_history
-        self.round_count = round_count
-        self.round = controller.round
+                for k in sorted(d):
+                    round_count[str(r)].append((k[0], k[1], d[k]))
+            self.round_history = round_history
+            self.round_count = round_count
+            self.round = controller.round
         self.output = {}
         for k, v in controller.output.items():
-            self.output[str(k)] = v
+            self.output[str(k)] = (v)
         self.measures = {}
         for m in setting.measure:
             self.measures[m.measure(controller)[0]] = m.measure(
@@ -90,20 +91,20 @@ class ExpResult():
         print("Experiment Result:")
         print("")
         print("Message History :")
+        if self.round:
+            for k, v in sorted(self.round_history.items(),key=lambda kv: int(kv[0])):
+                if k=='0':
+                    continue
+                print("Round "+str(int(k)))
+                for bucket in self.round_history[k]:
+                    print("from "+str(bucket[0])+" to " +
+                        str(bucket[1])+" content "+str(bucket[2]))
 
-        for k, v in sorted(self.round_history.items(),key=lambda kv: int(kv[0])):
-            if k=='0':
-                continue
-            print("Round "+str(int(k)))
-            for bucket in self.round_history[k]:
-                print("from "+str(bucket[0])+" to " +
-                    str(bucket[1])+" content "+str(bucket[2]))
-
-            print("Summary")
-            for (receiver, content, times) in self.round_count[k]:
-                print("Receiver "+str(receiver)+" Receive " +
-                      str(content)+" for "+str(times)+" time(s)")
-            print(" ")
+                print("Summary")
+                for (receiver, content, times) in self.round_count[k]:
+                    print("Receiver "+str(receiver)+" Receive " +
+                        str(content)+" for "+str(times)+" time(s)")
+                print(" ")
         if self.mine_results:
             print("Mine Results")
             for k, v in sorted(self.mine_results.items()):

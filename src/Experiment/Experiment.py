@@ -101,7 +101,7 @@ def SetStatParaAndRun(_file, setting, input, times, f, tf, protocol, adversary, 
 
 def RunExperiment(h, input, times, _lambda_list, k_list, protocol_list, adversary_list, f_list):
     # Basic Herding with SynHerdingCentralizedValidity Attacker
-    from Experiment.ExperimentSetting import SynchronousByzantine
+    from Experiment.SynchronousByzantineSetting import SynchronousByzantine
     from Test.TestConfig import PossibleControllers
     setting = SynchronousByzantine(None, None, None,
                                    PossibleControllers[0], f=None, tf=None, protocol=None,

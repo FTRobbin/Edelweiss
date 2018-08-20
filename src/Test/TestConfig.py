@@ -1,15 +1,18 @@
-from Protocols.Herding import *
-from Experiment.ExperimentSetting import *
+from Experiment.SynchronousByzantineSetting import *
+from Experiment.AsynSetting import *
 from Experiment.Experiment import *
 from Protocols.NaiveVoting import *
+from Protocols.Herding import *
 from Protocols.BOSCO import *
 from Protocols.DolevStrong import *
 from Protocols.Herding import *
 from Protocols.HerdingWithBroadcastFast import *
 from Protocols.DolevStrong_Wrong import *
+from Protocols.Nakamoto import *
 from Measures.ByzantineMeasures import *
 from Adversaries.CrashAdversary import *
 from Controllers.SynController import *
+from Controllers.AsynPermissionedController import *
 from Adversaries.HalfHalfSenderAdversary import *
 from Adversaries.SynBOSCOAgreementAttacker import *
 from Adversaries.SynBOSCOAgreementCentralizedAttacker import *
@@ -17,7 +20,7 @@ from Adversaries.SynHerdingBenchmarkAttacker import *
 from Adversaries.SynHerdingAgreementFast import *
 from Adversaries.DolevStrongRoundAdversary import *
 
-PossibleControllers = [SynController]
+PossibleControllers = [SynController,AsynPermissionedController]
 PossibleAdversaries = [CrashAdversary, HalfHalfSenderAdversary,
                        SynBOSCOAgreementAttacker, SynBOSCOAgreementCentralizedAttacker, SynHerdingBenchmarkAttacker, SynHerdingAgreementFast,DolevStrongRoundAdversary]
 
@@ -294,5 +297,12 @@ demoProtocols = [SynchronousByzantine(10, 1, PossibleAdversaries[2],
                                                  ByzConsistency, ByzUnanimity],
                                         centralized=False, centralized_adversary=PossibleAdversaries[
         0],
-    has_sender=True, corrupt_sender=True)
+    has_sender=True, corrupt_sender=True),
+    AsynchronousByzantine(3, 1, PossibleAdversaries[6],
+                                        PossibleControllers[1], f=0, tf=0, protocol=Nakamoto,
+                                        measure=[
+                                                 ByzConsistency],
+                                        centralized=False, centralized_adversary=PossibleAdversaries[
+        0],
+    has_sender=False, corrupt_sender=False,seed=None)
                                  ]

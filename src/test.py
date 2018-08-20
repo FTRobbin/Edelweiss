@@ -5,7 +5,7 @@ import re
 
 import jsonpickle
 
-from Experiment.ExperimentSetting import *
+from Experiment.SynchronousByzantineSetting import *
 from Experiment.Experiment import *
 from Protocols.NaiveVoting import *
 from Protocols.BOSCO import *
