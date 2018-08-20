@@ -78,8 +78,6 @@ class Tree:
             return Tree(self.node.clone(), set())
         new_node = self.node.clone()
         new_subtree = set()
-        if not self.subtree:
-            return Tree(new_node, new_subtree)
         for tree in self.subtree:
             new_subtree.add(tree.clone())
         return Tree(new_node, new_subtree,self.depth)
