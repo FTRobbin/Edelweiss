@@ -26,24 +26,23 @@ class AsynEnvironment:
         else:
             return self.controller.input
 
-    def get_input_msgs(self, sk):
-        return self.controller.get_message_buffer(sk)
-    
-    def drain_message_buffer(self,sk):
-        return self.controller.drain_message_buffer(sk)
+    def get_input_msg(self, sk):
+        return self.controller.get_message(sk)
 
-    def put_broadcast(self, sk,id, msg):
-        self.controller.put_broadcast(id,msg)
+    # def drain_message_buffer(self,sk):
+    #     return self.controller.drain_message_buffer(sk)
+
+    def put_broadcast(self, sk, id, msg):
+        self.controller.put_broadcast(id, msg)
 
     def put_packet(self, sk, msg, target):
         self.controller.put_packet(msg, target)
 
     def put_output(self, sk, output):
         self.controller.put_output(sk, output)
-    
-    def check_corrupt(self,sk):
-        return  self.controller.is_corrupt(sk)
-    
+
+    def check_corrupt(self, sk):
+        return self.controller.is_corrupt(sk)
+
     def get_k(self):
         return self.controller.k
-

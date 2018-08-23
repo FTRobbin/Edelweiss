@@ -36,7 +36,8 @@ class DolevStrong:
         if round == 0:
             if self.env.get_id(self) == DolevStrong.SENDER:
                 self.input = self.env.get_input(self)
-                self.env.put_broadcast(self, self.pki.sign(self, Message(myid, self.input)))
+                self.env.put_broadcast(self, self.pki.sign(
+                    self, Message(myid, self.input)))
                 self.seen[self.input] = True
         elif 1 <= round <= self.env.get_tf() + 1:
             msgs = self.env.get_input_msgs(self)
@@ -45,7 +46,8 @@ class DolevStrong:
                     b = msg.get_extraction()
                     if (b == 0 or b == 1) and not self.seen[b]:
                         self.seen[b] = True
-                        self.env.put_broadcast(self, self.pki.sign(self, Message(myid, msg)))
+                        self.env.put_broadcast(
+                            self, self.pki.sign(self, Message(myid, msg)))
             if round == self.env.get_tf() + 1:
                 if self.seen[1] and not self.seen[0]:
                     self.env.put_output(self, 1)

@@ -1,106 +1,51 @@
-from Util.Util import *
+import random
+import itertools
+
 
 class Forest:
-    def __init__(self, trees):
-        self.trees = trees
+    def __init__(self, genesis_block):
+        self.dict = {}
+        self.dict[genesis_block.id] = genesis_block.clone()
+        self.max_depth_block_id = genesis_block.id
+        self.max_depth = 1
+
+    def block_is_in(self, block):
+        return block.id in self.dict.keys() and self.dict[block.id].has_block
 
     def insert(self, block):
-        for tree in self.trees:
-            if tree.insert_up(block):
-                for other_tree in self.trees:
-                    if other_tree == tree:
-                        continue
-                    if other_tree.insert_down(tree.clone()):
-                        self.trees.remove(tree)
-                        return
+        if block.id in self.dict.keys():
+            if self.dict[block.id].has_block:
                 return
-        for tree in self.trees:
-            if tree.insert_down(Tree(block.clone(),set())):
-                return
-        self.trees.add(Tree(block.clone(), set()))
+            else:
+                self.dict[block.id].has_block = True
+                self.dict[block.id].previous_id = block.previous_id
+        else:
+            # insert the block
+            self.dict[block.id] = block.clone()
+            self.dict[block.id].has_block = True
+            self.dict[block.id].children_list = []
+            self.dict[block.id].has_genesis = False
+        # build the connection
+        if block.previous_id in self.dict.keys():
+            self.dict[block.previous_id].children_list.append(block.id)
+            self.dict[block.id].has_genesis = self.dict[block.previous_id].has_genesis
+            if self.dict[block.id].has_genesis:
+                self.dict[block.id].update_depth(
+                    self.dict[block.previous_id].depth+1, self)
+        else:
+            ghost_block = block.get_ghost_block(block.previous_id, block.id)
+            self.dict[block.previous_id] = ghost_block
 
-    def get_forest_tail(self):
-        return self.get_depthest_tree().get_tree_tail()
-    
-    def get_longest_chain(self):
-        return self.get_depthest_tree().get_longest_chain()
-    
-    
-    def get_depthest_tree(self):
-        return max(self.trees, key=lambda x: (x.get_depth(),-x.node.get_id()))
+    def query_max_depth_block_id(self):
+        return self.max_depth_block_id
 
-
-
-class Tree:
-    def __init__(self, node, subtree,depth=1):
-        if not node:
-            raise RuntimeError
-        self.node = node
-        self.subtree = subtree
-        self.depth = depth
-    
-
-
-    def insert_down(self,insert_tree):
-        insert_tree_node=insert_tree.get_node()
-        if self.node == insert_tree_node: 
-            return True
-        if insert_tree_node.check_is_previous(self.node.get_id()):
-            for tree in self.subtree:
-                if tree.node.get_id()==insert_tree.node.get_id():
-                    return True
-            self.subtree.add(insert_tree.clone())
-            self.depth=max(self.depth,insert_tree.get_depth()+1)
-            return True
-        if not self.subtree:
-            return False
-        for tree in self.subtree:
-            if tree.insert_down(insert_tree):
-                self.depth = max(tree.get_depth()+1,self.depth)
-                return True
-        return False
-
-
-
-    def insert_up(self, block):
-        if self.node.check_is_previous(block.get_id()):
-            new_subtree = {self.clone()}
-            self.node = block.clone()
-            self.subtree = new_subtree
-            self.depth += 1
-            return True
-        return False
-
-    def clone(self):
-        if not self.node:
-            raise RuntimeError
-        if not self.subtree:
-            return Tree(self.node.clone(), set())
-        new_node = self.node.clone()
-        new_subtree = set()
-        for tree in self.subtree:
-            new_subtree.add(tree.clone())
-        return Tree(new_node, new_subtree,self.depth)
-
-    def get_depth(self):
-        return self.depth
-
-    def get_tree_tail(self):
-        if not self.subtree:
-            return self
-        return self.get_depthest_subtree().get_tree_tail()
-
-    def get_node(self):
-        return self.node
-
-    def get_subtree(self):
-        return self.subtree
-
-    def get_longest_chain(self):
-        if not self.subtree:
-            return [self.node]
-        return [self.node]+self.get_depthest_subtree().get_longest_chain()
-    
-    
-    def get_depthest_subtree(self):
-        return max(self.subtree, key=lambda x: (x.get_depth(),-x.node.get_id()))
+    def get_chain(self):
+        chain = []
+        local_block_id = self.max_depth_block_id
+        while local_block_id != 0:
+            local_block = self.dict[local_block_id]
+            chain.append(local_block)
+            local_block_id = local_block.previous_id
+        chain.append(self.dict[0])
+        chain.reverse()
+        return chain

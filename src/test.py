@@ -23,10 +23,10 @@ from Test.TestConfig import *
 
 
 def generate_benchmark():
-    
+
     jsonfile = {}
     for ProtocolList in TestProtocolsList:
-        
+
         for setting in ProtocolList:
             exp = Experiment(setting)
             exp.run()
@@ -44,9 +44,10 @@ def test(ProtocolsList):
         data = jsonpickle.decode(content)
     cnt = 0
     for ProtocolList in ProtocolsList:
-        ProtocolName = [ k for k,v in globals().items() if v is ProtocolList][0]
+        ProtocolName = [k for k, v in globals().items()
+                        if v is ProtocolList][0]
         print("testing "+ProtocolName)
-        flag=0
+        flag = 0
         for setting in ProtocolList:
             exp = Experiment(setting)
             exp.run()
@@ -55,14 +56,14 @@ def test(ProtocolsList):
                 raise RuntimeError
             current_data = data[res[0]]
             if not operator.eq(current_data.round_history, res[1].round_history):
-                flag=1
+                flag = 1
                 print("%s test failed on round_history" % str(setting))
                 continue
             if not operator.eq(current_data.output, res[1].output):
-                flag=1
+                flag = 1
                 print("%s test failed on output" % str(setting))
                 continue
-        if flag==0:
+        if flag == 0:
             print('Test %s passed!' % ProtocolName)
             cnt += 1
         else:

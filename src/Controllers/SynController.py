@@ -22,18 +22,19 @@ class SynController:
         self.message_buffer = [[] for x in range(self.n)]
         self.message_history = []
         self.output = {}
-        self.centralized=setting.centralized
+        self.centralized = setting.centralized
         self.corf = setting.corrupt_sender
-        self.k=setting.k
-        self._lambda=setting._lambda
-        self.mine = Mine(setting._lambda,self.k,self.n, seed=setting.seed)
+        self.k = setting.k
+        self._lambda = setting._lambda
+        self.mine = Mine(setting._lambda, self.k, self.n, seed=setting.seed)
         if (self.has_sender):
             self.sender_id = setting.protocol.SENDER
         if (self.has_sender):
             self.tf = self.f
             if self.corf:
                 self.f -= 1
-        kargs={"env":self.env,"pki":self.pki,"mine":self.mine,"lambda":self._lambda,"con":self}
+        kargs = {"env": self.env, "pki": self.pki,
+                 "mine": self.mine, "lambda": self._lambda, "con": self}
         for i in range(self.n):
             if self.is_corrupt(i) and not self.centralized:
                 self.node_id[setting.adversary(**kargs)] = i
@@ -42,7 +43,6 @@ class SynController:
         if (setting.centralized):
             self.centralized_adversary = setting.centralized_adversary(
                 **kargs)
-
 
     def is_corrupt(self, id):
         if self.has_sender:
@@ -81,7 +81,7 @@ class SynController:
             d = {}
             for packet in sorted(self.message_history[r], key=lambda x: x[1].get_sender()):
                 print("From %d to %d content %s " %
-                    (packet[1].get_sender(), packet[0], str(packet[1])))
+                      (packet[1].get_sender(), packet[0], str(packet[1])))
                 key = (packet[0], str(packet[1]))
                 if key not in d:
                     d[key] = 0
@@ -91,7 +91,7 @@ class SynController:
             for k in sorted(d):
                 print("Receiver %d receive %s for %d times " %
                       (k[0], k[1], d[k]))
-        for k,v in sorted(self.mine.memory.items()):
+        for k, v in sorted(self.mine.memory.items()):
             print(k, end=' ')
             print(self.mine.memory[k])
 

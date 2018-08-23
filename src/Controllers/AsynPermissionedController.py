@@ -22,7 +22,7 @@ class AsynPermissionedController:
         self.message_pool = {}
         for i in range(0, self.n):
             self.message_pool[i] = []
-        self.message_buffer = [[] for x in range(self.n)]
+        # self.message_buffer = [[] for x in range(self.n)]
         self.message_history = []
         self.output = {}
         self.centralized = setting.centralized
@@ -30,7 +30,7 @@ class AsynPermissionedController:
         self.mine = None
         self.round = None
         self.scheduler = NakamotoScheduler(self.n, setting.seed)
-        self.counter=0
+        self.counter = 0
         if (self.has_sender):
             self.sender_id = setting.protocol.SENDER
         if (self.has_sender):
@@ -58,20 +58,12 @@ class AsynPermissionedController:
             return id + self.tf >= self.n
 
     def is_completed(self):
-        self.counter+=1
-        return self.counter>100
-
+        self.counter += 1
+        return self.counter > 1000
 
     def run_step(self):
         [node, event] = self.scheduler.schedule()
         if event == 'Deliver':
-            if not self.message_pool[node]:
-                return
-            for msg in self.message_pool[node]:
-                if msg.get_sender()==node:
-                    continue
-                self.message_buffer[node].append(msg)
-            self.message_pool[node]=[]
             self.id_node[node].receive_block()
         elif event == 'Mine':
             self.id_node[node].mine_block()
@@ -79,42 +71,35 @@ class AsynPermissionedController:
             raise RuntimeError
 
     def drain(self):
-        for node in self.id_node.keys():
-            if not self.message_pool[node]:
-                pass
-            for msg in self.message_pool[node]:
-                if msg.get_sender()==node:
-                    continue
-                self.message_buffer[node].append(msg)
-            self.message_pool[node]=[]
-        for node in self.node_id.keys():
-            node.get_remaining_msgs()
+        while not isListEmpty(list(self.message_pool.values())):
+            # while not filter(list(self.message_pool.values()),lambda x:x!=[]):
+            node = None
+            event = None
+            # while (True):
+            [node, event] = self.scheduler.schedule()
+            # if event == 'Deliver':
+            #     break
+            self.id_node[node].receive_block()
+
     def run(self):
         while not self.is_completed():
             self.run_step()
-        # self.drain()
+        self.drain()
+        # raise NotImplementedError
         for node in self.node_id.keys():
             node.put_output()
 
-    def get_message_buffer(self, node):
+    def get_message(self, node):
         id = self.node_id[node]
-        if not self.message_buffer[id]:
-            return []
-        ret = [self.message_buffer[id][0]]
-        self.message_buffer[id].remove(self.message_buffer[id][0])
-        return ret
-    
-    def drain_message_buffer(self,node):
-        id = self.node_id[node]
-        if not self.message_buffer[id]:
-            return []
-        ret = self.message_buffer[id]
-        self.message_buffer[id]=[]
+        if not self.message_pool[id]:
+            return None
+        ret = self.message_pool[id][0]
+        self.message_pool[id].remove(self.message_pool[id][0])
         return ret
 
-    def put_broadcast(self,id, msg):
+    def put_broadcast(self, id, msg):
         for i in range(self.n):
-            if i==id:
+            if i == id:
                 continue
             self.message_pool[i].append(msg.clone())
 

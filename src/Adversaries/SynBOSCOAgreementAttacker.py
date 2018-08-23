@@ -5,7 +5,7 @@ class SynBOSCOAgreementAttacker:
     name = "Synchronous BOSCO Agreement Attacker"
     SENDER = 0
 
-    def __init__(self,**kargs):
+    def __init__(self, **kargs):
         self.env = kargs["env"]
         self.pki = kargs["pki"]
         self.pki.register(self)

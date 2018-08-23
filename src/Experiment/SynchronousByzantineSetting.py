@@ -4,9 +4,6 @@ from Oracles.PKI import *
 from Adversaries import *
 
 
-
-
-
 class SynchronousByzantine:
     def __init__(self, n, input, adversary, controller,
                  f=0, tf=0,
@@ -54,16 +51,15 @@ class SynchronousByzantine:
             print("input : %d" % self.input)
         if tf > 0:
             print("num of corruptions : %d" % tf)
-    
-    def __str__(self):
-        current_name=self.protocol.name+str(self.input)+str(self.centralized)
-        if self.tf>0:
-            if self.centralized:
-                current_name+=self.centralized_adversary.name+self.f+self.tf
-            else:
-                current_name+=self.adversary.name+str(self.f)+str(self.tf)
-        return current_name
 
+    def __str__(self):
+        current_name = self.protocol.name+str(self.input)+str(self.centralized)
+        if self.tf > 0:
+            if self.centralized:
+                current_name += self.centralized_adversary.name+self.f+self.tf
+            else:
+                current_name += self.adversary.name+str(self.f)+str(self.tf)
+        return current_name
 
     def set_input(self, input):
         self.input = input
@@ -89,7 +85,6 @@ class SynchronousByzantine:
     def set_n(self, n):
         self.n = n
 
-
     def set_f(self, f):
         self.f = f
 
@@ -104,8 +99,6 @@ class SynchronousByzantine:
 
     def set_k(self, k):
         self.k = k
-
-
 
     def set_centralized(self, centralized):
         self.centralized = centralized

@@ -13,7 +13,7 @@ class NakamotoScheduler:
         res.append(random.randint(0, self.n-1))
         # if random.choice([True, False]):
         # res.append(self.counter%2)
-        if self.counter % (self.n+10)==0:
+        if self.counter % (self.n+10) == 0:
             # res.append(random.randint(0, self.n-1))
             # res.append(self.counter % 3)
             res.append('Mine')

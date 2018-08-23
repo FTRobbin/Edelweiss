@@ -7,7 +7,7 @@ class SynHerdingAgreementFast:
 
     def __init__(self, **kargs):
         self.env = kargs["env"]
-        if self.env.get_f()==0:
+        if self.env.get_f() == 0:
             return
         self.pki = kargs["pki"]
         self.con = kargs["con"]
@@ -17,7 +17,8 @@ class SynHerdingAgreementFast:
         self.buckets = [[], []]
         self.bar = self.env.get_k() * self._lambda * self._lambda
         self.my_mine = kargs["mine"]
-        self.pow_info = [[[self.my_mine.POW(i, j, k) for k in range(2)] for j in range(self.env.get_n())] for i in range(self.bar)]
+        self.pow_info = [[[self.my_mine.POW(i, j, k) for k in range(
+            2)] for j in range(self.env.get_n())] for i in range(self.bar)]
         self.called = 0
         self.corrupt_node_list = list(
             filter(lambda x: self.env.check_corrupt(x), range(self.env.get_n())))
@@ -39,7 +40,7 @@ class SynHerdingAgreementFast:
         self.bak_len = [0, 0]
 
     def run_node(self):
-        if self.env.get_f()==0:
+        if self.env.get_f() == 0:
             return
         self.called += 1
         if (self.called % self.con.f) != 1:
@@ -93,8 +94,10 @@ class SynHerdingAgreementFast:
                     predict_bucketslen[b] = max(
                         predict_bucketslen[b], self.node_receive_bucket_len[i][b] + 1)
             for i in self.good_node_list:
-                self.node_receive_bucket_len[i][0] = max(self.node_receive_bucket_len[i][0], predict_bucketslen[0])
-                self.node_receive_bucket_len[i][1] = max(self.node_receive_bucket_len[i][1], predict_bucketslen[1])
+                self.node_receive_bucket_len[i][0] = max(
+                    self.node_receive_bucket_len[i][0], predict_bucketslen[0])
+                self.node_receive_bucket_len[i][1] = max(
+                    self.node_receive_bucket_len[i][1], predict_bucketslen[1])
                 if self.node_receive_bucket_len[i][0] == 0 and self.node_receive_bucket_len[i][1] == 0:
                     continue
                 if self.node_receive_bucket_len[i][0] >= self.node_receive_bucket_len[i][1]:
@@ -115,7 +118,8 @@ class SynHerdingAgreementFast:
                         self.represent_node.env.put_packet(self.represent_node, self.represent_node.pki.sign(
                             self.represent_node, Message(self.represent_id, tosend)), i)
                         self.node_receive_bucket_len[i][1 - b] = len(tosend)
-                        self.bak_len[1 - b] = max(self.bak_len[1 - b], len(tosend))
+                        self.bak_len[1 -
+                                     b] = max(self.bak_len[1 - b], len(tosend))
             else:
                 can0 = []
                 can1 = []
@@ -128,7 +132,7 @@ class SynHerdingAgreementFast:
                     flag = False
                     for t0 in can0:
                         for t1 in can1:
-                           if t0 != t1:
+                            if t0 != t1:
                                 if self.predict_node_belief[t0] == 1:
                                     self.represent_node.env.put_packet(self.represent_node, self.represent_node.pki.sign(
                                         self.represent_node, Message(self.represent_id, self.buckets[0])), t0)

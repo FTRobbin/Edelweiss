@@ -17,10 +17,8 @@ class ByzValidity:
                 for x, y in con.output.items():
                     if not con.is_corrupt(x) and y not in input_local:
                         valid = False
-            return ("Validity",bool(valid))
-        return ("Validity",True)
-            
-
+            return ("Validity", bool(valid))
+        return ("Validity", True)
 
 
 class ByzConsistency:
@@ -35,11 +33,11 @@ class ByzConsistency:
                     output = y
                 elif output != y:
                     consistent = False
-        return ("Consistency",bool(consistent))
+        return ("Consistency", bool(consistent))
 
 
 class ByzUnanimity:
-    
+
     @staticmethod
     def measure(con):
         if (not con.has_sender) or (con.has_sender and not con.corf):

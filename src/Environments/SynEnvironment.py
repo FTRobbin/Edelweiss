@@ -37,10 +37,9 @@ class SynEnvironment:
 
     def put_output(self, sk, output):
         self.controller.put_output(sk, output)
-    
-    def check_corrupt(self,sk):
-        return  self.controller.is_corrupt(sk)
-    
+
+    def check_corrupt(self, sk):
+        return self.controller.is_corrupt(sk)
+
     def get_k(self):
         return self.controller.k
-

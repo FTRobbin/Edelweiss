@@ -54,7 +54,7 @@ class HerdingWithBroadcastFast:
                     self.buckets[bucket[0].belief] = bucket
             l0 = len(self.buckets[0])
             l1 = len(self.buckets[1])
-            if  l0 != 0 or l1 != 0:
+            if l0 != 0 or l1 != 0:
                 if (l0 > l1) or (l0 == l1):
                     self.belief = 0
                 else:

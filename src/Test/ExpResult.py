@@ -19,18 +19,18 @@ class ExpResult():
         self.f = setting.f
         self.tf = setting.tf
         self.n = setting.n
-        self.seed=setting.seed
+        self.seed = setting.seed
         self.input = setting.input
         self.centralized = setting.centralized
         self.has_sender = setting.has_sender
         self._lambda = setting._lambda
         self.seed = setting.seed
         self.mine_results = None
-        self.round=None
+        self.round = None
         if controller.round:
             round_history = {}
             round_count = {}
-            for r in range(0, controller.round ):
+            for r in range(0, controller.round):
                 round_history[str(r)] = []
                 round_count[str(r)] = []
                 d = {}
@@ -92,18 +92,18 @@ class ExpResult():
         print("")
         print("Message History :")
         if self.round:
-            for k, v in sorted(self.round_history.items(),key=lambda kv: int(kv[0])):
-                if k=='0':
+            for k, v in sorted(self.round_history.items(), key=lambda kv: int(kv[0])):
+                if k == '0':
                     continue
                 print("Round "+str(int(k)))
                 for bucket in self.round_history[k]:
                     print("from "+str(bucket[0])+" to " +
-                        str(bucket[1])+" content "+str(bucket[2]))
+                          str(bucket[1])+" content "+str(bucket[2]))
 
                 print("Summary")
                 for (receiver, content, times) in self.round_count[k]:
                     print("Receiver "+str(receiver)+" Receive " +
-                        str(content)+" for "+str(times)+" time(s)")
+                          str(content)+" for "+str(times)+" time(s)")
                 print(" ")
         if self.mine_results:
             print("Mine Results")

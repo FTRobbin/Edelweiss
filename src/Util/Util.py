@@ -1,6 +1,12 @@
 from Experiment.Experiment import *
 
 
+def isListEmpty(inList):
+    if isinstance(inList, list):  # Is a list
+        return all(map(isListEmpty, inList))
+    return False  # Not a list
+
+
 def ContentToString(input):
     if type(input) is tuple:
         return '('+str(input[0])+','+(''.join(str(e) + ' ' for e in input[1]))[0:-1]+')'
@@ -29,44 +35,54 @@ class Block:
 class Nakamoto_Block:
     current_id = 1
 
-    def __init__(self, previous_id, id=None):
-        if id==None:
+    def __init__(self, previous_id, has_block=True, children_list=[], has_genesis=False, id=None, depth=None):
+        if id == None:
             self.id = Nakamoto_Block.current_id
             Nakamoto_Block.current_id += 1
             self.previous_id = previous_id
-            
+            self.has_block = has_block
+            self.children_list = children_list
+            self.has_genesis = has_genesis
+            self.depth = depth
         else:
             self.id = id
             self.previous_id = previous_id
+            self.has_block = has_block
+            self.children_list = children_list
+            self.has_genesis = has_genesis
+            self.depth = depth
 
-    @classmethod
-    def get_genesis_block(self):
-        local_current_id = Nakamoto_Block.current_id
-        Nakamoto_Block.current_id = 0
-        genesis_block = Nakamoto_Block(-1)
-        Nakamoto_Block.current_id = local_current_id
+    @staticmethod
+    def get_genesis_block():
+        genesis_block = Nakamoto_Block(-1, has_genesis=True, id=0, depth=1)
         return genesis_block
 
-    def check_is_previous(self, previous_id):
-        return self.previous_id == previous_id
+    def get_ghost_block(self, ghost_id, child_id):
+        ghost_block = Nakamoto_Block(None, has_block=False, children_list=[
+                                     child_id], has_genesis=None, id=ghost_id)
+        return ghost_block
+
+    def update_depth(self, depth, tree):
+        self.depth = depth
+        if not self.children_list:
+            if tree.max_depth < self.depth or tree.max_depth == self.depth and self.id < tree.max_depth_block_id:
+                tree.max_depth = self.depth
+                tree.max_depth_block_id = self.id
+        for children in self.children_list:
+            tree.dict[children].has_genesis = True
+            tree.dict[children].update_depth(self.depth+1, tree)
 
     def clone(self):
-        return Nakamoto_Block(self.previous_id, self.id)
-
-    def get_id(self):
-        return self.id
-
-    def get_previous_id(self):
-        return self.previous_id
+        return Nakamoto_Block(self.previous_id, self.has_block, self.children_list.copy(), self.has_genesis, self.id, self.depth)
 
     def __str__(self):
         return str(self.previous_id)+'|'+str(self.id)
 
     def __eq__(self, other):
-        return self.__key() == other.__key()
-    
+        return self.id == other.id
+
     def __hash__(self):
         return hash(self.__key())
 
     def __key(self):
-        return (self.id,self.previous_id)
+        return (self.id, self.previous_id)

@@ -5,7 +5,7 @@ class HalfHalfSenderAdversary:
     name = "Half-half Sender"
     SENDER = 0
 
-    def __init__(self,**kargs):
+    def __init__(self, **kargs):
         self.env = kargs["env"]
         self.pki = kargs["pki"]
         self.pki.register(self)
@@ -30,10 +30,12 @@ class HalfHalfSenderAdversary:
         myid = self.env.get_id(self)
         if round == 0:
             if self.env.get_id(self) == HalfHalfSenderAdversary.SENDER:
-               self.input = self.env.get_input(self)
-               for i in range(1, (self.env.get_n() >> 1) + 1):
-                    self.env.put_packet(self, self.pki.sign(self, Message(myid, self.input)), i)
-               for i in range((self.env.get_n() >> 1) + 1, self.env.get_n()):
-                    self.env.put_packet(self, self.pki.sign(self, Message(myid, 1 - self.input)), i)
+                self.input = self.env.get_input(self)
+                for i in range(1, (self.env.get_n() >> 1) + 1):
+                    self.env.put_packet(self, self.pki.sign(
+                        self, Message(myid, self.input)), i)
+                for i in range((self.env.get_n() >> 1) + 1, self.env.get_n()):
+                    self.env.put_packet(self, self.pki.sign(
+                        self, Message(myid, 1 - self.input)), i)
         else:
             pass
