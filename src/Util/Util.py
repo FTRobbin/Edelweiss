@@ -62,16 +62,6 @@ class Nakamoto_Block:
                                      child_id], has_genesis=None, id=ghost_id)
         return ghost_block
 
-    def update_depth(self, depth, tree):
-        self.depth = depth
-        if not self.children_list:
-            if tree.max_depth < self.depth or tree.max_depth == self.depth and self.id < tree.max_depth_block_id:
-                tree.max_depth = self.depth
-                tree.max_depth_block_id = self.id
-        for children in self.children_list:
-            tree.dict[children].has_genesis = True
-            tree.dict[children].update_depth(self.depth+1, tree)
-
     def clone(self):
         return Nakamoto_Block(self.previous_id, self.has_block, self.children_list.copy(), self.has_genesis, self.id, self.depth)
 

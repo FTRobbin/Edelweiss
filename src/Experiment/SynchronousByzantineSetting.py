@@ -66,6 +66,9 @@ class SynchronousByzantine:
 
     def get_input(self):
         return self.input
+    
+    def get_protocol(self):
+        return self.protocol
 
     def set_protocol(self, protocol):
         self.protocol = protocol
@@ -74,13 +77,13 @@ class SynchronousByzantine:
         self.adversary = adversary
 
     def get_adversary(self):
-        return self.adversary.name
+        return self.adversary
 
     def set_centralized_adversary(self, centralized_adversary):
         self.centralized_adversary = centralized_adversary
 
     def get_centralized_adversary(self):
-        return self.centralized_adversary.name
+        return self.centralized_adversary
 
     def set_n(self, n):
         self.n = n

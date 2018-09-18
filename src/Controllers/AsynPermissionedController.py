@@ -72,13 +72,11 @@ class AsynPermissionedController:
 
     def drain(self):
         while not isListEmpty(list(self.message_pool.values())):
-            # while not filter(list(self.message_pool.values()),lambda x:x!=[]):
+            alive_list=list(filter(lambda x:self.message_pool[x],self.message_pool.keys()))
+            self.scheduler.set_alive_list(alive_list)
             node = None
             event = None
-            # while (True):
             [node, event] = self.scheduler.schedule()
-            # if event == 'Deliver':
-            #     break
             self.id_node[node].receive_block()
 
     def run(self):
@@ -88,7 +86,7 @@ class AsynPermissionedController:
         # raise NotImplementedError
         for node in self.node_id.keys():
             node.put_output()
-
+    # get only one message
     def get_message(self, node):
         id = self.node_id[node]
         if not self.message_pool[id]:
