@@ -58,3 +58,15 @@ class ByzUnanimity:
             else:
                 return ("Unanimity", bool(True))
         return ("Unanimity", bool(True))
+
+class RelativePoolRevenue:
+    @staticmethod
+    def measure(con):
+        chain=con.block_forest.get_chain()
+        corrupt_list=list(filter(lambda x: con.is_corrupt(x), range(con.n)))
+        corrupt_count=0
+        for block in chain:
+            if block.get_miner() in corrupt_list:
+                corrupt_count+=1
+        return ("RelativePoolRevenue",corrupt_count/(len(chain)-1))
+

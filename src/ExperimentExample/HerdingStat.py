@@ -8,7 +8,7 @@ def HerdingStat(times=1):
     input = 50*[1]+50*[0]
     # Experiment 1: Broken without broadcast
     protocol_list = [Herding]
-    adversary_list = [PossibleAdversaries[4]]
+    adversary_list = [PossibleAdversaries[5]]
     _lambda_list = [2]
     k_list = [5, 10, 15, 20, 25, 30]
     f_list = [20]

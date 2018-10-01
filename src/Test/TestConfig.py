@@ -19,10 +19,11 @@ from Adversaries.SynBOSCOAgreementCentralizedAttacker import *
 from Adversaries.SynHerdingBenchmarkAttacker import *
 from Adversaries.SynHerdingAgreementFast import *
 from Adversaries.DolevStrongRoundAdversary import *
+from Adversaries.AsynNakamotoSelfishMiner import *
 
 PossibleControllers = [SynController, AsynPermissionedController]
 PossibleAdversaries = [CrashAdversary, HalfHalfSenderAdversary,
-                       SynBOSCOAgreementAttacker, SynBOSCOAgreementCentralizedAttacker, SynHerdingBenchmarkAttacker, SynHerdingAgreementFast, DolevStrongRoundAdversary]
+                       SynBOSCOAgreementAttacker, SynBOSCOAgreementCentralizedAttacker, SynHerdingBenchmarkAttacker, SynHerdingAgreementFast, DolevStrongRoundAdversary, AsynNakamotoSelfishMiner]
 
 #################### Navie Voting Begin #########################
 #################### Navie Voting Begin #########################
@@ -303,5 +304,12 @@ demoProtocols = [SynchronousByzantine(10, 1, PossibleAdversaries[2],
         ByzConsistency],
     centralized=False, centralized_adversary=PossibleAdversaries[
         0],
-    has_sender=False, corrupt_sender=False, seed=None)
+    has_sender=False, corrupt_sender=False, seed=None),
+    AsynchronousByzantine(2, 1, PossibleAdversaries[7],
+                          PossibleControllers[1], f=1, tf=1, protocol=Nakamoto,
+                          measure=[
+        ByzConsistency, RelativePoolRevenue],
+    centralized=True, centralized_adversary=PossibleAdversaries[
+        7],
+    has_sender=False, corrupt_sender=False, seed=3)
 ]

@@ -46,3 +46,7 @@ class AsynEnvironment:
 
     def get_k(self):
         return self.controller.k
+    
+    def insert_block(self,block):
+        return self.controller.insert_block(block)
+

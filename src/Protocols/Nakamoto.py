@@ -10,7 +10,7 @@ class Nakamoto:
 
     def __init__(self, **kargs):
         self.genesis_block = Nakamoto_Block.get_genesis_block()
-        self.block_forest = Forest(self.genesis_block)
+        self.block_forest = Forest()
         self.env = kargs["env"]
         self.pki = kargs["pki"]
         self.pki.register(self)
@@ -34,7 +34,8 @@ class Nakamoto:
     def mine_block(self):
         myid = self.env.get_id(self)
         new_block = Nakamoto_Block(
-            self.block_forest.query_max_depth_block_id())
+            self.block_forest.query_max_depth_block_id(),miner=myid)
+        self.env.insert_block(new_block)
         self.block_forest.insert(new_block)
         self.env.put_broadcast(self, myid, self.pki.sign(
             self, Message(myid, new_block, round)))

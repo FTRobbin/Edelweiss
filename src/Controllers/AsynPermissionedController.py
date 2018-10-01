@@ -1,4 +1,5 @@
 from Util.Util import *
+from Util.Forest import *
 from Oracles.Mine import Mine
 from Oracles.NakamotoScheduler import NakamotoScheduler
 
@@ -31,6 +32,7 @@ class AsynPermissionedController:
         self.round = None
         self.scheduler = NakamotoScheduler(self.n, setting.seed)
         self.counter = 0
+        self.block_forest = Forest()
         if (self.has_sender):
             self.sender_id = setting.protocol.SENDER
         if (self.has_sender):
@@ -59,25 +61,35 @@ class AsynPermissionedController:
 
     def is_completed(self):
         self.counter += 1
-        return self.counter > 1000
+        return self.counter > 5
 
     def run_step(self):
-        [node, event] = self.scheduler.schedule()
-        if event == 'Deliver':
-            self.id_node[node].receive_block()
-        elif event == 'Mine':
-            self.id_node[node].mine_block()
+        [node_num, event] = self.scheduler.schedule()
+        if self.is_corrupt(node_num):
+            if event == 'Deliver':
+                self.centralized_adversary.receive_block(node_num)
+            elif event == 'Mine':
+                self.centralized_adversary.mine_block(node_num)
+            else:
+                raise RuntimeError
         else:
-            raise RuntimeError
+            if event == 'Deliver':
+                self.id_node[node_num].receive_block()
+            elif event == 'Mine':
+                self.id_node[node_num].mine_block()
+            else:
+                raise RuntimeError
 
     def drain(self):
         while not isListEmpty(list(self.message_pool.values())):
-            alive_list=list(filter(lambda x:self.message_pool[x],self.message_pool.keys()))
+            alive_list = list(
+                filter(lambda x: self.message_pool[x], self.message_pool.keys()))
             self.scheduler.set_alive_list(alive_list)
-            node = None
-            event = None
-            [node, event] = self.scheduler.schedule()
-            self.id_node[node].receive_block()
+            node_num = self.scheduler.schedule()[0]
+            if self.is_corrupt(node_num):
+                self.centralized_adversary.receive_block(node_num)
+            else:
+                self.id_node[node_num].receive_block()
 
     def run(self):
         while not self.is_completed():
@@ -85,7 +97,11 @@ class AsynPermissionedController:
         self.drain()
         # raise NotImplementedError
         for node in self.node_id.keys():
-            node.put_output()
+            if not self.is_corrupt(self.node_id[node]):
+                node.put_output()
+        if self.tf > 0:
+            self.centralized_adversary.put_output()
+
     # get only one message
     def get_message(self, node):
         id = self.node_id[node]
@@ -97,13 +113,21 @@ class AsynPermissionedController:
 
     def put_broadcast(self, id, msg):
         for i in range(self.n):
-            if i == id:
-                continue
+            # if i == id:
+            #     continue
             self.message_pool[i].append(msg.clone())
 
     def put_packet(self, msg, target):
         self.message_pool[target].append(msg)
 
     def put_output(self, node, output):
-        id = self.node_id[node]
-        self.output[id] = output
+        if node is self.centralized_adversary:
+            self.output[self.n-1] = output
+        else:
+            id = self.node_id[node]
+            self.output[id] = output
+
+    def insert_block(self, block):
+        if self.block_forest.block_is_in(block):
+            return
+        self.block_forest.insert(block)

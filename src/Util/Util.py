@@ -6,6 +6,11 @@ def isListEmpty(inList):
         return all(map(isListEmpty, inList))
     return False  # Not a list
 
+def DictDeepCopy(dict_input):
+    _dict={}
+    for k,v in dict_input.items():
+        _dict[k]=v.clone()
+    return _dict
 
 def ContentToString(input):
     if type(input) is tuple:
@@ -35,7 +40,7 @@ class Block:
 class Nakamoto_Block:
     current_id = 1
 
-    def __init__(self, previous_id, has_block=True, children_list=[], has_genesis=False, id=None, depth=None):
+    def __init__(self, previous_id, has_block=True, children_list=[], has_genesis=False, id=None, depth=None,miner=None):
         if id == None:
             self.id = Nakamoto_Block.current_id
             Nakamoto_Block.current_id += 1
@@ -44,6 +49,7 @@ class Nakamoto_Block:
             self.children_list = children_list
             self.has_genesis = has_genesis
             self.depth = depth
+            self.miner=miner
         else:
             self.id = id
             self.previous_id = previous_id
@@ -51,6 +57,7 @@ class Nakamoto_Block:
             self.children_list = children_list
             self.has_genesis = has_genesis
             self.depth = depth
+            self.miner=miner
 
     @staticmethod
     def get_genesis_block():
@@ -63,7 +70,10 @@ class Nakamoto_Block:
         return ghost_block
 
     def clone(self):
-        return Nakamoto_Block(self.previous_id, self.has_block, self.children_list.copy(), self.has_genesis, self.id, self.depth)
+        return Nakamoto_Block(self.previous_id, self.has_block, self.children_list.copy(), self.has_genesis, self.id, self.depth,self.miner)
+
+    def __copy__(self):
+        return self.clone()
 
     def __str__(self):
         return str(self.previous_id)+'|'+str(self.id)
@@ -76,3 +86,6 @@ class Nakamoto_Block:
 
     def __key(self):
         return (self.id, self.previous_id)
+    
+    def get_miner(self):
+        return self.miner
