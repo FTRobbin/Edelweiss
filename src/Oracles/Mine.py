@@ -20,3 +20,5 @@ class Mine:
 
     def set_seed(self, seed):
         random.seed(seed)
+
+

@@ -27,6 +27,7 @@ class SynController:
         self.k = setting.k
         self._lambda = setting._lambda
         self.mine = Mine(setting._lambda, self.k, self.n, seed=setting.seed)
+        self.walker_num = setting.walker_num
         if (self.has_sender):
             self.sender_id = setting.protocol.SENDER
         if (self.has_sender):
@@ -51,7 +52,10 @@ class SynController:
             return id + self.tf >= self.n
 
     def is_completed(self):
-        return len({k: v for k, v in self.output.items() if not self.is_corrupt(k)}) == self.n - self.tf
+        if self.round == 1:
+            return True
+        #Temporary change
+        # return len({k: v for k, v in self.output.items() if not self.is_corrupt(k)}) == self.n - self.tf
 
     def run_step(self):
         self.round += 1
@@ -68,6 +72,15 @@ class SynController:
     def run(self):
         while not self.is_completed():
             self.run_step()
+        
+        for packet in self.message_pool:
+            self.message_buffer[packet[0]].append(packet[1])
+        self.message_history.append(self.message_pool)
+        self.message_pool = []
+        for node in self.node_id.keys():
+            node.receive_messages()
+        for node in self.node_id.keys():
+            node.put_output()
 
     def report(self):
         for x, y in self.output.items():

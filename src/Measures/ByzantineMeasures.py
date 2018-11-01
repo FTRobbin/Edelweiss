@@ -1,4 +1,4 @@
-
+from Util.Tangle import *
 
 class ByzValidity:
 
@@ -31,7 +31,7 @@ class ByzConsistency:
             if not con.is_corrupt(x):
                 if output == -1:
                     output = y
-                elif output != y:
+                elif not check_identical(output, y):
                     consistent = False
         return ("Consistency", bool(consistent))
 
@@ -69,4 +69,10 @@ class RelativePoolRevenue:
             if block.get_miner() in corrupt_list:
                 corrupt_count+=1
         return ("RelativePoolRevenue",corrupt_count/(len(chain)-1))
+    
+def check_identical(x,y):
+    if type(x) is Tangle:
+        return x.check_identical(y)
+    else:
+        return x==y
 

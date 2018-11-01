@@ -43,3 +43,6 @@ class SynEnvironment:
 
     def get_k(self):
         return self.controller.k
+    
+    def get_walker_num(self):
+        return self.controller.walker_num

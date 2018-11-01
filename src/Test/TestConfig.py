@@ -9,6 +9,7 @@ from Protocols.Herding import *
 from Protocols.HerdingWithBroadcastFast import *
 from Protocols.DolevStrong_Wrong import *
 from Protocols.Nakamoto import *
+from Protocols.IOTA import *
 from Measures.ByzantineMeasures import *
 from Adversaries.CrashAdversary import *
 from Controllers.SynController import *
@@ -311,5 +312,11 @@ demoProtocols = [SynchronousByzantine(10, 1, PossibleAdversaries[2],
         ByzConsistency, RelativePoolRevenue],
     centralized=True, centralized_adversary=PossibleAdversaries[
         7],
-    has_sender=False, corrupt_sender=False, seed=3)
+    has_sender=False, corrupt_sender=False, seed=3),
+    SynchronousByzantine(2, 1, None,
+                         PossibleControllers[0], f=0, tf=0, protocol=IOTA,
+                         measure=[ByzValidity,
+                                  ByzConsistency, ByzUnanimity],
+                         centralized=False, centralized_adversary=None,
+    has_sender=False, corrupt_sender=None,walker_num=2),
 ]

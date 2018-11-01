@@ -50,7 +50,6 @@ class Herding:
             bucket_lists = [[], []]
             for msg in msgs:
                 if (not self.pki.verify(msg)):
-                    self.pki.verify(msg)
                     raise RuntimeError
                 bucket = msg.get_extraction()
                 if not bool(bucket):
