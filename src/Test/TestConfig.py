@@ -313,7 +313,7 @@ demoProtocols = [SynchronousByzantine(10, 1, PossibleAdversaries[2],
     centralized=True, centralized_adversary=PossibleAdversaries[
         7],
     has_sender=False, corrupt_sender=False, seed=3),
-    SynchronousByzantine(2, 1, None,
+    SynchronousByzantine(10, 1, None,
                          PossibleControllers[0], f=0, tf=0, protocol=IOTA,
                          measure=[ByzValidity,
                                   ByzConsistency, ByzUnanimity],

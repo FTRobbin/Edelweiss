@@ -94,24 +94,26 @@ class Nakamoto_Block:
 
 
 class Tangle_Site:
-    current_id = 2
+    current_id = 4
 
-    def __init__(self, father_id_list, children_list, miner, id=None):
+    def __init__(self, father_id_list, children_list, miner,vote, id=None):
         if id == None:
             self.id = Tangle_Site.current_id
             Tangle_Site.current_id = Tangle_Site.current_id+1
             self.father_id_list = father_id_list
             self.children_list = children_list
             self.miner = miner
+            self.vote=vote
         else:
             self.id = id
             self.father_id_list = father_id_list
             self.children_list = children_list
             self.miner = miner
+            self.vote=vote
 
     @staticmethod
     def get_genesis_site():
-        genesis_site = Tangle_Site([], [], None, 1)
+        genesis_site = Tangle_Site([], [], None, None, 1)
         return genesis_site
 
     def calculate_cumulative_weight(self):
@@ -141,7 +143,7 @@ class Tangle_Site:
                 return site
         return site
     def clone(self):
-        return Tangle_Site(self.father_id_list.copy(), [], self.miner, self.id)
+        return Tangle_Site(self.father_id_list.copy(), [], self.miner,self.vote,self.id)
 
     def copy(self):
         return self.clone()

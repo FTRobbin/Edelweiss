@@ -14,8 +14,7 @@ class IOTA:
         self.pki = kargs["pki"]
         self.pki.register(self)
         self.input = None
-        self.Tangle = Tangle(Tangle_Site.get_genesis_site(),
-                             self.env.get_walker_num())
+        self.Tangle = Tangle.init_with_fork()
         self.belief = 0
 
     def run_node(self):
@@ -32,20 +31,24 @@ class IOTA:
         my_pow=True
         # my_pow = random.choice([True, False])
         if my_pow:
-            selected_tips = self.Tangle.random_walk()
+            selected_tips=[]
+            while True:
+                selected_tips = self.Tangle.random_walk()
+                if selected_tips[0].vote==selected_tips[1].vote:
+                    break
             if selected_tips[0]==selected_tips[1]:
                 del selected_tips[1]
             father_id_list = []
             for tip in selected_tips:
                 father_id_list.append(tip.id)
             new_site = self.pki.sign(
-                self, Tangle_Site(father_id_list, [], myid))
+                self, Tangle_Site(father_id_list, [], selected_tips[0].vote, myid))
             for tip in selected_tips:
                 if new_site in tip.children_list:
                     continue
                 tip.children_list.append(new_site)
-                self.env.put_broadcast(self, self.pki.sign(
-                    self, Message(myid, new_site, round)))
+            self.env.put_broadcast(self, self.pki.sign(
+                self, Message(myid, new_site, round)))
 
     def put_output(self):
         self.env.put_output(self,

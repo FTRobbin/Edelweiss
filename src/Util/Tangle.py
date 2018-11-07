@@ -1,14 +1,24 @@
-from Util import *
+from Util.Util import Tangle_Site
 from random import shuffle
 from random import uniform
 from functools import reduce
 from operator import iadd
-
+import queue
 
 class Tangle:
     def __init__(self, genesis_site, walker_num):
         self.genesis_site = genesis_site
         self.walker_num = walker_num
+    
+    @staticmethod
+    def init_with_fork():
+        fork_tangle = Tangle(Tangle_Site.get_genesis_site(),
+                             2)
+        site2 = Tangle_Site([1], [], None, 1, 2)
+        site3 = Tangle_Site([1], [], None, 0, 3)
+        fork_tangle.insert_site(site2)
+        fork_tangle.insert_site(site3)
+        return fork_tangle
 
     def get_tobeapproved_site(self):
         return self.random_walk()
@@ -70,4 +80,41 @@ class Tangle:
                 raise RuntimeError
             father_site.children_list.append(site)
     def check_identical(self, another_tangle):
+        self.simple_print()
         return self.genesis_site.check_identical_site(another_tangle.genesis_site)
+    
+    
+    def simple_print(self):
+        q = queue.Queue()
+        q.put(self.genesis_site)
+        visited = {self.genesis_site}
+        layer_dict = {0: [self.genesis_site]}
+        depth_dict = {self.genesis_site.id: 0}
+        while(not q.empty()):
+            current_site = q.get()
+            if not current_site.children_list:
+                continue
+            for child in current_site.children_list:
+                if not child in visited:
+                    visited.add(child)
+                    q.put(child)
+                    if (depth_dict[current_site.id]+1) not in layer_dict.keys():
+                        layer_dict[depth_dict[current_site.id]+1] = []
+                    depth_dict[child.id] = depth_dict[current_site.id]+1
+                    layer_dict[depth_dict[current_site.id]+1].append(child)
+        ratio_dict={}
+        for k,v in layer_dict.items():
+            count_list=[0,0]
+            for i in range(len(v)):
+                if v[i].vote!=0 and v[i].vote!=1:
+                    continue
+                count_list[v[i].vote]=count_list[v[i].vote]+1
+            sum = count_list[0]+count_list[1]
+            if sum!=0:
+                count_list[0]=count_list[0]*1.0/sum
+                count_list[1]=count_list[1]*1.0/sum
+            for i in range(len(v)):
+                v[i]=v[i].id
+            ratio_dict[k]=count_list
+        print(layer_dict)
+        print(ratio_dict)
