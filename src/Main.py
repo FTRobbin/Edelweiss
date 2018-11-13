@@ -49,7 +49,7 @@ def main():
                 raise RuntimeError
         else:
             assert False, "unhandled option"
-    run_and_print(demoProtocols[-1])
+    run_only(demoProtocols[-1])
 
 
 def usage():

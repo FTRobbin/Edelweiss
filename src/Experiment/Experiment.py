@@ -130,3 +130,8 @@ def run_and_get_result(setting):
     exp = Experiment(setting)
     exp.run()
     return exp.get_result()
+
+def run_only(setting):
+    exp = Experiment(setting)
+    exp.run()
+

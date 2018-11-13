@@ -21,10 +21,11 @@ from Adversaries.SynHerdingBenchmarkAttacker import *
 from Adversaries.SynHerdingAgreementFast import *
 from Adversaries.DolevStrongRoundAdversary import *
 from Adversaries.AsynNakamotoSelfishMiner import *
+from Adversaries.SynIOTAForkAttacker import *
 
 PossibleControllers = [SynController, AsynPermissionedController]
 PossibleAdversaries = [CrashAdversary, HalfHalfSenderAdversary,
-                       SynBOSCOAgreementAttacker, SynBOSCOAgreementCentralizedAttacker, SynHerdingBenchmarkAttacker, SynHerdingAgreementFast, DolevStrongRoundAdversary, AsynNakamotoSelfishMiner]
+                       SynBOSCOAgreementAttacker, SynBOSCOAgreementCentralizedAttacker, SynHerdingBenchmarkAttacker, SynHerdingAgreementFast, DolevStrongRoundAdversary, AsynNakamotoSelfishMiner,SynIOTAForkAttacker]
 
 #################### Navie Voting Begin #########################
 #################### Navie Voting Begin #########################
@@ -319,4 +320,10 @@ demoProtocols = [SynchronousByzantine(10, 1, PossibleAdversaries[2],
                                   ByzConsistency, ByzUnanimity],
                          centralized=False, centralized_adversary=None,
     has_sender=False, corrupt_sender=None,walker_num=2),
+    SynchronousByzantine(10, 3, None,
+                         PossibleControllers[0], f=4, tf=4, protocol=IOTA,
+                         measure=[ByzValidity,
+                                  ByzConsistency, ByzUnanimity],
+                         centralized=True, centralized_adversary=PossibleAdversaries[-1],
+    has_sender=False, corrupt_sender=None,walker_num=2)
 ]
