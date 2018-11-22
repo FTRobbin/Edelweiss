@@ -13,14 +13,15 @@ class Tangle:
 
     @staticmethod
     def init_with_fork():
-        fork_tangle = Tangle(Tangle_Site.get_genesis_site(),
+        genesis_site=Tangle_Site.get_genesis_site()
+        fork_tangle = Tangle(genesis_site,
                              2)
-        site2 = Tangle_Site([1], [], None, 1, 2)
-        site3 = Tangle_Site([1], [], None, 0, 3)
+        site2 = Tangle_Site([1], [], None, 1, [genesis_site],0,2)
+        site3 = Tangle_Site([1], [], None, 0,[genesis_site],0, 3)
         fork_tangle.insert_site(site2)
         fork_tangle.insert_site(site3)
         return fork_tangle
-
+    
     def random_walk(self):
         walker_list = []
         walker_start_point_list = []
@@ -75,6 +76,63 @@ class Tangle:
             for walker in to_be_deleted_walker:
                 walker_list.remove(walker)
 
+
+
+
+    # def random_walk(self):
+    #     walker_list = []
+    #     walker_start_point_list = []
+    #     selected_tip = []
+    #     for i in range(self.walker_num):
+    #         walker_start_point_list.append(self.genesis_site)
+    #         walker_list.append(self.genesis_site)
+    #     while(True):
+    #         walking_order = [i for i in range(len(walker_list))]
+    #         shuffle(walking_order)
+    #         to_be_deleted_walker = []
+    #         for i in walking_order:
+    #             if not walker_list[i].children_list:
+    #                 if not selected_tip:
+    #                     selected_tip.append(walker_list[i])
+    #                     to_be_deleted_walker.append(walker_list[i])
+    #                     continue
+    #                 else:
+    #                     if selected_tip[0].vote != walker_list[i].vote:
+    #                         del selected_tip[0]
+    #                         walker_list.append(self.genesis_site)
+    #                         walker_list[i] = self.genesis_site
+    #                         continue
+    #                     else:
+    #                         selected_tip.append(walker_list[i])
+    #                         return selected_tip
+
+    #             transition_probability_list = self.calculate_transition_probability(
+    #                 walker_start_point_list[i], walker_list[i])
+    #             cumulative_probability_list = list(reduce(lambda result, x: iadd(
+    #                 result, [result[-1] + x]), transition_probability_list, [0])[1:])
+    #             sum = reduce(lambda a, b: a+b, transition_probability_list)
+    #             random_point = randint(1, sum)
+    #             for j in range(len(cumulative_probability_list)):
+    #                 if random_point <= cumulative_probability_list[j]:
+    #                     walker_list[i] = walker_list[i].children_list[j]
+    #                     if not walker_list[i].children_list:
+    #                         if not selected_tip:
+    #                             selected_tip.append(walker_list[i])
+    #                             to_be_deleted_walker.append(walker_list[i])
+    #                             break
+    #                         else:
+    #                             if selected_tip[0].vote != walker_list[i].vote:
+    #                                 del selected_tip[0]
+    #                                 walker_list.append(self.genesis_site)
+    #                                 break
+    #                             else:
+    #                                 selected_tip.append(walker_list[i])
+    #                                 return selected_tip
+    #                     break
+
+    #         for walker in to_be_deleted_walker:
+    #             walker_list.remove(walker)
+
     def calculate_transition_probability(self, start_point, walker):
         cumulative_weight_list = []
         for child in walker.children_list:
@@ -92,6 +150,8 @@ class Tangle:
             if not father_site:
                 raise RuntimeError
             father_site.children_list.append(site)
+            site.father_list.append(father_site)
+        site.update_weight()
 
     def check_identical(self, another_tangle):
         self.simple_print()
@@ -136,45 +196,65 @@ class Tangle:
 class Tangle_Site:
     current_id = 4
 
-    def __init__(self, father_id_list, children_list, miner, vote, id=None):
+    def __init__(self, father_id_list, children_list, miner, vote,father_list,weight, id=None):
         if id == None:
             self.id = Tangle_Site.current_id
             Tangle_Site.current_id = Tangle_Site.current_id+1
             self.father_id_list = father_id_list
+            self.father_list=father_list
             self.children_list = children_list
             self.miner = miner
             self.vote = vote
+            self.weight=weight
         else:
             self.id = id
             self.father_id_list = father_id_list
+            self.father_list = father_list
             self.children_list = children_list
             self.miner = miner
             self.vote = vote
-
+            self.weight = weight
+    
     @staticmethod
     def get_genesis_site():
-        genesis_site = Tangle_Site([], [], None, None, 1)
+        genesis_site = Tangle_Site([], [], None, None,[],0, 1)
         return genesis_site
 
-    def calculate_cumulative_weight(self):
-        # len(self.calculate_descendants_helper())
-        return len(self.calculate_descendants_helper())
-
-    def calculate_descendants_helper(self):
-        visited = []
-        descendant_set = set()
-        self.calculate_descendants(visited, descendant_set)
-        return descendant_set
-
-    def calculate_descendants(self, visited, descendant_set):
+    def update_weight(self):
+        visited=[]
+        self.weight=0
+        self.update_weight_helper(visited)
+    
+    def update_weight_helper(self,visited):
         if self.id in visited:
             return
         visited.append(self.id)
-        descendant_set.add(self.id)
-        if not self.children_list:
-            return
-        for child in self.children_list:
-            child.calculate_descendants(visited, descendant_set)
+        self.weight=self.weight+1
+        for father in self.father_list:
+            father.update_weight_helper(visited)
+
+    def calculate_cumulative_weight(self):
+        # len(self.calculate_descendants_helper())
+        # return len(self.calculate_descendants_helper())
+        return self.weight
+
+    def calculate_descendants_helper(self):
+        raise NotImplementedError
+        # visited = []
+        # descendant_set = set()
+        # self.calculate_descendants(visited, descendant_set)
+        # return descendant_set
+
+    def calculate_descendants(self, visited, descendant_set):
+        raise NotImplementedError
+        # if self.id in visited:
+        #     return
+        # visited.append(self.id)
+        # descendant_set.add(self.id)
+        # if not self.children_list:
+        #     return
+        # for child in self.children_list:
+        #     child.calculate_descendants(visited, descendant_set)
 
     def find_site_with_id_helper(self, id, visited, site):
         if self.id in visited:
@@ -198,7 +278,7 @@ class Tangle_Site:
         return site[0]
 
     def clone(self):
-        return Tangle_Site(self.father_id_list.copy(), [], self.miner, self.vote, self.id)
+        return Tangle_Site(self.father_id_list.copy(), [], self.miner, self.vote,[],0,self.id)
 
     def copy(self):
         return self.clone()

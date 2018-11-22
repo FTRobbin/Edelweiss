@@ -40,14 +40,18 @@ class IOTA:
             if selected_tips[0]==selected_tips[1]:
                 del selected_tips[1]
             father_id_list = []
+            father_list = []
             for tip in selected_tips:
                 father_id_list.append(tip.id)
+            for tip in selected_tips:
+                father_list.append(tip)
             new_site = self.pki.sign(
-                self, Tangle_Site(father_id_list, [], myid, selected_tips[0].vote))
+                self, Tangle_Site(father_id_list, [], myid, selected_tips[0].vote,father_list,0))
             for tip in selected_tips:
                 if new_site in tip.children_list:
                     continue
                 tip.children_list.append(new_site)
+            new_site.update_weight()
             self.env.put_broadcast(self, self.pki.sign(
                 self, Message(myid, new_site, round)))
         self.print_weight()

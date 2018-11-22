@@ -45,7 +45,7 @@ class SynIOTAForkAttacker:
         for site in self.chameleon_dict.values():
             my_pow=True
             if my_pow:
-                new_site = Tangle_Site([], [], self.represent_id,None)
+                new_site = Tangle_Site([], [], self.represent_id,None,[],0)
                 self.my_sites.append(new_site)
         weight1=self.Tangle.genesis_site.children_list[0].calculate_cumulative_weight()
         weight0 =self.Tangle.genesis_site.children_list[1].calculate_cumulative_weight()
@@ -61,8 +61,10 @@ class SynIOTAForkAttacker:
                 balance_site=self.my_sites.pop()
                 balance_site.vote=1-indicator
                 balance_site.father_id_list=[2+indicator]
+                balance_site.father_list.append(self.Tangle.genesis_site.children_list[indicator])
+                balance_site.update_weight()
                 signed_site = self.pki.sign(self.represent_node, balance_site)
-                self.Tangle.genesis_site.children_list[0+indicator].children_list.append(signed_site)
+                self.Tangle.genesis_site.children_list[indicator].children_list.append(signed_site)
                 self.env.put_broadcast(self.represent_node, self.pki.sign(
                     self.represent_node, Message(self.represent_id, signed_site, round)))
         
