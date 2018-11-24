@@ -1,5 +1,4 @@
-# from Experiment.Experiment import *
-
+import socket
 
 def isListEmpty(inList):
     if isinstance(inList, list):  # Is a list
@@ -21,6 +20,17 @@ def ContentToString(input):
         return (''.join(str(e) + ' ' for e in input))[0:-1]
     else:
         return str(input)
+
+def get_host_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 80))
+        ip = s.getsockname()[0]
+    finally:
+        s.close()
+    return ip
+
+
 
 
 class Block:

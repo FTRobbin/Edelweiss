@@ -19,7 +19,7 @@ class SynIOTAForkAttacker:
         self.con = kargs["con"]
         self.pki.register(self)
         self.input = None
-        self.Tangle = Tangle.init_with_fork()
+        self.Tangle = Tangle.init_with_fork(self.env.get_seed())
         self.belief = 0
         self.chameleon_dict = {}
         self.my_sites=[]
@@ -38,6 +38,8 @@ class SynIOTAForkAttacker:
         for msg in msgs:
             if (not self.pki.verify(msg)):
                 raise RuntimeError
+            if msg.sender == self.represent_id:
+                continue
             new_site = msg.get_extraction().copy()
             if not new_site:
                 raise RuntimeError

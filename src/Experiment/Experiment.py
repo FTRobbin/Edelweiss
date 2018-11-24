@@ -1,3 +1,5 @@
+import time
+
 from Test.ExpResult import *
 from Util.Util import *
 from Measures.ByzantineMeasures import *
@@ -51,6 +53,9 @@ class Experiment:
                 self.controller)[1]
         return measure_dict
 
+    def get_output(self):
+        return self.controller.output[0]
+
 
 def AtomicStat(f, setting, times):
     stat_dict = {'Consistency': 0, 'Validity': 0, 'Unanimity': 0}
@@ -67,10 +72,19 @@ def AtomicStat(f, setting, times):
         f.flush()
 
 
+def IOTAAtomicStat(f, setting, times):
+    for i in range(times):
+        setting.set_seed(setting.seed+i)
+        res = run_and_get_output(setting)
+        print(res, file=f)
+        if f:
+            f.flush()
+
+
 # set parameter and run
 
 
-def SetStatParaAndRun(_file, setting, input, times, f, tf, protocol, adversary, _lambda=1, k=1, centralized=True):
+def SetStatParaAndRun(_file, setting, input, times, f, tf, protocol, adversary, _lambda=1, k=1, centralized=True, atomic_index=0):
     setting.set_input(input)
     setting.set_n(len(input))
     setting.set_f(f)
@@ -99,6 +113,35 @@ def SetStatParaAndRun(_file, setting, input, times, f, tf, protocol, adversary, 
     AtomicStat(_file, setting, times)  # atomtic one
 
 
+def SetIOTAStatParaAndRun(_file, setting, node_num, times, f, tf, protocol, adversary, _lambda=1, k=1, centralized=True,seed=None):
+    setting.set_n(node_num)
+    setting.set_f(f)
+    setting.set_tf(tf)
+    setting.set_protocol(protocol)
+    setting.set_centralized(centralized)
+    setting.set_seed(seed)
+    if centralized:
+        setting.set_centralized_adversary(adversary)
+    else:
+        setting.set_adversary(adversary)
+    print("protocol="+setting.get_protocol().name, file=_file)
+    if centralized:
+        print("Centralized adversary!", file=_file)
+        print("centralized_adversary=" +
+              setting.get_centralized_adversary().name, file=_file)
+    else:
+        print("adversary="+setting.get_adversary().name, file=_file)
+    print("node_num="+str(node_num), file=_file)
+    print("times="+str(times), file=_file)
+    print("f="+str(f), file=_file)
+    print("tf="+str(tf), file=_file)
+    localtime = time.asctime( time.localtime(time.time()) )
+    print("current_time"+str(localtime),file=_file)
+    IOTAAtomicStat(_file, setting, times)  # atomtic one
+    localtime = time.asctime( time.localtime(time.time()) )
+    print("current_time"+str(localtime),file=_file)
+
+
 def RunExperiment(h, input, times, _lambda_list, k_list, protocol_list, adversary_list, f_list):
     # Basic Herding with SynHerdingCentralizedValidity Attacker
     from Experiment.SynchronousByzantineSetting import SynchronousByzantine
@@ -119,6 +162,25 @@ def RunExperiment(h, input, times, _lambda_list, k_list, protocol_list, adversar
                         print(" ", file=h)
 
 
+def RunIOTAExperiment(h, node_num, times, protocol_list, adversary_list, f_list, seed_para):
+    from Experiment.SynchronousByzantineSetting import SynchronousByzantine
+    from Test.TestConfig import PossibleControllers
+    setting = SynchronousByzantine(None, None, None,
+                                   PossibleControllers[0], f=None, tf=None, protocol=None,
+                                   measure=[ByzValidity,
+                                            ByzConsistency, ByzUnanimity],
+                                   centralized=None, centralized_adversary=None, seed=seed_para,
+                                   has_sender=False, corrupt_sender=None, walker_num=2)
+    for protocol in protocol_list:
+        for adversary in adversary_list:
+            for f in f_list:
+                tf = f
+                SetIOTAStatParaAndRun(
+                    h, setting, node_num, times, f, tf, protocol, adversary, None, None,True, seed_para)
+
+                print(" ", file=h)
+
+
 def run_and_print(setting):
     exp = Experiment(setting)
     exp.run()
@@ -126,12 +188,18 @@ def run_and_print(setting):
     res[1].print()
 
 
+def run_and_get_output(setting):
+    exp = Experiment(setting)
+    exp.run()
+    return exp.get_output()
+
+
 def run_and_get_result(setting):
     exp = Experiment(setting)
     exp.run()
     return exp.get_result()
 
+
 def run_only(setting):
     exp = Experiment(setting)
     exp.run()
-

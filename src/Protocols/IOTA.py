@@ -16,17 +16,23 @@ class IOTA:
         self.pki = kargs["pki"]
         self.pki.register(self)
         self.input = None
-        self.Tangle = Tangle.init_with_fork()
+        self.Tangle = Tangle.init_with_fork(self.env.get_seed())
         self.belief = 0
         self.plotdata=[]
+        self.running_rounds=self.env.controller.running_rounds
 
     def run_node(self):
         round = self.env.get_round()
+        if round == self.running_rounds:
+            self.env.put_output(self, self.plotdata)
+            return
         myid = self.env.get_id(self)
         msgs = self.env.get_input_msgs(self)
         for msg in msgs:
             if (not self.pki.verify(msg)):
                 raise RuntimeError
+            if msg.sender == myid:
+                continue
             new_site = msg.get_extraction().copy()
             if not new_site:
                 raise RuntimeError
@@ -54,16 +60,16 @@ class IOTA:
             new_site.update_weight()
             self.env.put_broadcast(self, self.pki.sign(
                 self, Message(myid, new_site, round)))
-        self.print_weight()
+        self.update_plotdata()
 
-    def put_output(self):
-        self.env.put_output(self,
-                            self.Tangle)
-        if (self.env.get_id(self)!=0):
-            return
-        print(self.plotdata)
-        plt.plot(self.plotdata, 'ro')
-        plt.show()
+    # def put_output(self):
+    #     self.env.put_output(self,
+    #                         self.plotdata)
+    #     if (self.env.get_id(self)!=0):
+    #         return
+    #     print(self.plotdata)
+    #     plt.plot(self.plotdata, 'ro')
+    #     plt.show()
     def receive_messages(self):
         return
         msgs = self.env.get_input_msgs(self)
@@ -76,7 +82,7 @@ class IOTA:
             self.Tangle.insert_site(new_site)
         
 
-    def print_weight(self):
+    def update_plotdata(self):
         myid = self.env.get_id(self)
         if myid != 0 :
             return

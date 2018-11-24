@@ -25,6 +25,9 @@ class SynEnvironment:
             return self.controller.input[node]
         else:
             return self.controller.input
+    
+    def get_seed(self):
+        return self.controller.seed
 
     def get_input_msgs(self, sk):
         return self.controller.get_message_buffer(sk)
