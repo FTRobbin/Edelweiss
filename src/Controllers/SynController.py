@@ -52,10 +52,11 @@ class SynController:
             return id + self.tf >= self.n
 
     def is_completed(self):
-        if self.round == 40:
+        if self.round == 30:
             return True
         #Temporary change
-        # return len({k: v for k, v in self.output.items() if not self.is_corrupt(k)}) == self.n - self.tf
+        # return len({k: v for k, v in se
+        # lf.output.items() if not self.is_corrupt(k)}) == self.n - self.tf
 
     def run_step(self):
         self.round += 1

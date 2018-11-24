@@ -1,6 +1,8 @@
 import getopt
 import sys
 import re
+import time
+
 
 from Experiment.SynchronousByzantineSetting import *
 from Experiment.Experiment import *
@@ -59,4 +61,6 @@ def usage():
 
 
 if __name__ == "__main__":
+    t0 = time.time()
     main()
+    print (time.time() - t0, "seconds")

@@ -143,8 +143,8 @@ class Tangle:
         return self.genesis_site.check_site_present(site)
 
     def insert_site(self, site):
-        if self.check_site_present(site):
-            return
+        # if self.check_site_present(site):
+        #     return
         for father_id in site.father_id_list:
             father_site = self.genesis_site.find_site_with_id(father_id)
             if not father_site:

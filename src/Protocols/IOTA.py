@@ -27,6 +27,8 @@ class IOTA:
         for msg in msgs:
             if (not self.pki.verify(msg)):
                 raise RuntimeError
+            if msg.sender == myid:
+                continue
             new_site = msg.get_extraction().copy()
             if not new_site:
                 raise RuntimeError
@@ -63,7 +65,7 @@ class IOTA:
             return
         print(self.plotdata)
         plt.plot(self.plotdata, 'ro')
-        plt.show()
+        # plt.show()
     def receive_messages(self):
         return
         msgs = self.env.get_input_msgs(self)

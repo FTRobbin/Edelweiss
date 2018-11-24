@@ -38,6 +38,8 @@ class SynIOTAForkAttacker:
         for msg in msgs:
             if (not self.pki.verify(msg)):
                 raise RuntimeError
+            if msg.sender == self.represent_id:
+                continue
             new_site = msg.get_extraction().copy()
             if not new_site:
                 raise RuntimeError
