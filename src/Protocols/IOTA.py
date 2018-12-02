@@ -20,9 +20,12 @@ class IOTA:
         self.belief = 0
         self.plotdata=[]
         self.running_rounds=self.env.controller.running_rounds
+        self.mine = kargs["IOTAMine"]
 
     def run_node(self):
         round = self.env.get_round()
+        if round > self.running_rounds:
+            return
         if round == self.running_rounds:
             self.env.put_output(self, self.plotdata)
             return
@@ -37,8 +40,7 @@ class IOTA:
             if not new_site:
                 raise RuntimeError
             self.Tangle.insert_site(new_site)
-        my_pow=True
-        # my_pow = random.choice([True, False])
+        my_pow = self.mine.POW(round,myid)
         if my_pow:
             selected_tips=self.Tangle.random_walk()
             if selected_tips[0].vote!=selected_tips[1].vote:

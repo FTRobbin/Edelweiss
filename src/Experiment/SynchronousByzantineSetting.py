@@ -9,7 +9,7 @@ class SynchronousByzantine:
                  f=0, tf=0,
                  protocol=None, measure=[],
                  centralized=False, centralized_adversary=None,
-                 has_sender=False, corrupt_sender=False, seed=None, _lambda=-1, k=1,walker_num=10,rounds=30):
+                 has_sender=False, corrupt_sender=False, seed=None, _lambda=-1, k=1,walker_num=10,rounds=30,limit=0):
         self.experiment_type = "Synchronous Byzantine"
         self.n = n
         self.input = input
@@ -30,6 +30,7 @@ class SynchronousByzantine:
         self.k = k
         self.walker_num=walker_num
         self.rounds=rounds
+        self.limit=limit
 
     def clone(self):
         raise NotImplementedError

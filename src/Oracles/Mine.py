@@ -22,3 +22,15 @@ class Mine:
         random.seed(seed)
 
 
+class IOTAMine:
+    def __init__(self, running_rounds,_lambda, n, seed=None):
+        self.n = n
+        self.running_rounds=running_rounds
+        random.seed(seed)
+        self.memory = [[random.randint(1,_lambda)==1 for i in range(self.n)] for j in range(self.running_rounds)]
+
+
+    def POW(self, round, id):
+        if round >= self.running_rounds or id >= self.n:
+            raise RuntimeError
+        return self.memory[round][id]

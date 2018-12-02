@@ -115,6 +115,7 @@ def SetStatParaAndRun(_file, setting, input, times, f, tf, protocol, adversary, 
 
 def SetIOTAStatParaAndRun(_file, setting, node_num, times, f, tf, protocol, adversary, _lambda=1, k=1, centralized=True,seed=None):
     setting.set_n(node_num)
+    setting.set_lambda(_lambda)
     setting.set_f(f)
     setting.set_tf(tf)
     setting.set_protocol(protocol)
@@ -162,7 +163,7 @@ def RunExperiment(h, input, times, _lambda_list, k_list, protocol_list, adversar
                         print(" ", file=h)
 
 
-def RunIOTAExperiment(h, node_num, times, protocol_list, adversary_list, f_list, seed_para):
+def RunIOTAExperiment(h, node_num, times, protocol_list, adversary_list, f_list, seed_para,_lambda_list):
     from Experiment.SynchronousByzantineSetting import SynchronousByzantine
     from Test.TestConfig import PossibleControllers
     setting = SynchronousByzantine(None, None, None,
@@ -170,13 +171,15 @@ def RunIOTAExperiment(h, node_num, times, protocol_list, adversary_list, f_list,
                                    measure=[ByzValidity,
                                             ByzConsistency, ByzUnanimity],
                                    centralized=None, centralized_adversary=None, seed=seed_para,
-                                   has_sender=False, corrupt_sender=None, walker_num=2)
+                                   has_sender=False, corrupt_sender=None, walker_num=2,)
+    
     for protocol in protocol_list:
         for adversary in adversary_list:
             for f in f_list:
-                tf = f
-                SetIOTAStatParaAndRun(
-                    h, setting, node_num, times, f, tf, protocol, adversary, None, None,True, seed_para)
+                for _lambda in _lambda_list:
+                    tf = f
+                    SetIOTAStatParaAndRun(
+                        h, setting, node_num, times, f, tf, protocol, adversary, _lambda, None,True, seed_para)
 
                 print(" ", file=h)
 
