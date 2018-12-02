@@ -17,11 +17,11 @@ seed_map = {
 
 
 def IOTAStat(times=1):
-    h = open("IOTAStat50246.txt", "w+")
+    h = open("IOTAStat100345.txt", "w+")
     protocol_list = [IOTA]
     adversary_list = [PossibleAdversaries[8]]
-    f_list = [2,4,6]
-    node_num = 50
+    f_list = [3,4,5]
+    node_num = 100
     ip = get_host_ip()
     ip_id = int(ip.split('.')[-1])
     # seed = seed_map[ip_id]

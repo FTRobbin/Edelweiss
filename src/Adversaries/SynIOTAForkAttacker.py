@@ -1,5 +1,6 @@
 import random
 import sys
+import math
 from Messages.Message import Message
 from Util.Util import *
 from Util.Tangle import *
@@ -54,7 +55,7 @@ class SynIOTAForkAttacker:
         weight0 =self.Tangle.genesis_site.children_list[1].calculate_cumulative_weight()
         if weight0==weight1:
             if len(self.my_sites)>self.limit:
-                self.equal_add
+                self.equal_add()
             return
         else:
             if weight0>weight1:
@@ -88,7 +89,7 @@ class SynIOTAForkAttacker:
         #     self.Tangle.insert_site(new_site)
         
     def equal_add(self):
-        add_num=ceil((len(self.my_sites)-self.limit)/2)
+        add_num=math.ceil((len(self.my_sites)-self.limit)/2)
         for i in range(add_num):
             for indicator in range(2):
                 balance_site=self.my_sites.pop()
