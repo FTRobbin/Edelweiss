@@ -165,13 +165,26 @@ class Tangle_Site:
         self.weight=0
         self.update_weight_helper(visited)
     
-    def update_weight_helper(self,visited):
-        if self.id in visited:
-            return
-        visited.append(self.id)
-        self.weight=self.weight+1
-        for father in self.father_list:
-            father.update_weight_helper(visited)
+    # def update_weight_helper(self,visited):
+    #     if self.id in visited:
+    #         return
+    #     visited.append(self.id)
+    #     self.weight=self.weight+1
+    #     for father in self.father_list:
+    #         father.update_weight_helper(visited)
+    
+
+    def update_weight_helper(self, visited):
+        q = []
+        q.append(self)
+        visited = {self}
+        while(q):
+            current_site = q.pop()
+            current_site.weight=current_site.weight+1
+            for child in current_site.father_list:
+                if not child in visited:
+                    visited.add(child)
+                    q.append(child)
 
     def calculate_cumulative_weight(self):
         # len(self.calculate_descendants_helper())
@@ -196,20 +209,37 @@ class Tangle_Site:
         # for child in self.children_list:
         #     child.calculate_descendants(visited, descendant_set)
 
+    # def find_site_with_id_helper(self, id, visited, site):
+    #     if self.id in visited:
+    #         return
+    #     visited.append(self.id)
+    #     if self.id == id:
+    #         site[0] = self
+    #         return
+    #     if not self.children_list:
+    #         return
+    #     for child in self.children_list:
+    #         child.find_site_with_id_helper(id, visited, site)
+    #         if site[0]:
+    #             return
+    #     return
+    
     def find_site_with_id_helper(self, id, visited, site):
-        if self.id in visited:
-            return
-        visited.append(self.id)
-        if self.id == id:
-            site[0] = self
-            return
-        if not self.children_list:
-            return
-        for child in self.children_list:
-            child.find_site_with_id_helper(id, visited, site)
-            if site[0]:
+        q = []
+        q.append(self)
+        visited = {self}
+        while(q):
+            current_site = q.pop()
+            if current_site.id == id:
+                site[0] = current_site
                 return
-        return
+            for child in current_site.children_list:
+                if not child in visited:
+                    visited.add(child)
+                    q.append(child)
+        raise RuntimeError
+
+
 
     def find_site_with_id(self, id):
         visited = []
