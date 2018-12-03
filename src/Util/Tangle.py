@@ -9,6 +9,7 @@ class Tangle:
         self.genesis_site = genesis_site
         self.walker_num = walker_num
         random.seed(_seed)
+        self.id_node_map={self.genesis_site.id:genesis_site}
 
     @staticmethod
     def init_with_fork(seed=None):
@@ -85,8 +86,9 @@ class Tangle:
         return self.genesis_site.check_site_present(site)
 
     def insert_site(self, site):
+        self.id_node_map[site.id]=site
         for father_id in site.father_id_list:
-            father_site = self.genesis_site.find_site_with_id(father_id)
+            father_site = self.id_node_map[father_id]
             if not father_site:
                 raise RuntimeError
             father_site.children_list.append(site)

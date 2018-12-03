@@ -9,7 +9,7 @@ class SynchronousByzantine:
                  f=0, tf=0,
                  protocol=None, measure=[],
                  centralized=False, centralized_adversary=None,
-                 has_sender=False, corrupt_sender=False, seed=None, _lambda=-1, k=1,walker_num=10,rounds=30,limit=20):
+                 has_sender=False, corrupt_sender=False, seed=None, _lambda=-1, k=1,walker_num=10,rounds=20,limit=20):
         self.experiment_type = "Synchronous Byzantine"
         self.n = n
         self.input = input

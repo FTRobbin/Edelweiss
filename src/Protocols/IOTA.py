@@ -60,6 +60,7 @@ class IOTA:
                     continue
                 tip.children_list.append(new_site)
             new_site.update_weight()
+            self.Tangle.id_node_map[new_site.id]=new_site
             self.env.put_broadcast(self, self.pki.sign(
                 self, Message(myid, new_site, round)))
         self.update_plotdata()
