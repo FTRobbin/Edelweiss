@@ -98,9 +98,9 @@ class SynIOTAForkAttacker:
                 balance_site.father_id_list=[2+indicator]
                 balance_site.father_list.append(self.Tangle.genesis_site.children_list[indicator])
                 balance_site.update_weight()
+                self.Tangle.id_node_map[balance_site.id]=balance_site
                 signed_site = self.pki.sign(self.represent_node, balance_site)
                 self.Tangle.genesis_site.children_list[indicator].children_list.append(signed_site)
                 self.env.put_broadcast(self.represent_node, self.pki.sign(
                     self.represent_node, Message(self.represent_id, signed_site, running_round)))
-
 
