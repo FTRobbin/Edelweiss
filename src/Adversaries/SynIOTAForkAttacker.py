@@ -55,7 +55,7 @@ class SynIOTAForkAttacker:
         weight0 =self.Tangle.genesis_site.children_list[1].calculate_cumulative_weight()
         if weight0==weight1:
             if len(self.my_sites)>self.limit:
-                self.equal_add()
+                self.equal_add(running_round)
             return
         else:
             if weight0>weight1:
@@ -74,7 +74,7 @@ class SynIOTAForkAttacker:
                 self.env.put_broadcast(self.represent_node, self.pki.sign(
                     self.represent_node, Message(self.represent_id, signed_site, running_round)))
             if len(self.my_sites)>self.limit:
-                self.equal_add
+                self.equal_add(running_round)
 
                 
     def receive_messages(self):
@@ -88,7 +88,7 @@ class SynIOTAForkAttacker:
         #         raise RuntimeError
         #     self.Tangle.insert_site(new_site)
         
-    def equal_add(self):
+    def equal_add(self,running_round):
         add_num=math.ceil((len(self.my_sites)-self.limit)/2)
         for i in range(add_num):
             for indicator in range(2):
