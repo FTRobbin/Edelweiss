@@ -17,16 +17,27 @@ seed_map = {
 
 
 def IOTAStat(times=1):
-    h = open("IOTAStat100345.txt", "w+")
+    h = open("IOTAStatStat.txt", "w+")
     protocol_list = [IOTA]
     adversary_list = [PossibleAdversaries[8]]
-    f_list = [3,4,5]
-    node_num = 100
+    f_list = [3]
+    node_num = 25
     ip = get_host_ip()
     ip_id = int(ip.split('.')[-1])
-    # seed = seed_map[ip_id]
-    seed = random.randint(1,10000000000000000)
+    seed = seed_map[ip_id]
+    # seed = random.randint(1,10000000000000000)
     _lambda_list=[1]
     RunIOTAExperiment(h, node_num, times, protocol_list,
                       adversary_list, f_list, seed,_lambda_list)
+    f_list = [4]
+    node_num = 50
+    seed = random.randint(1,10000000000000000)
+    RunIOTAExperiment(h, node_num, times, protocol_list,
+                    adversary_list, f_list, seed,_lambda_list)
+    f_list = [5]
+    node_num = 100
+    seed = random.randint(1,10000000000000000)
+    RunIOTAExperiment(h, node_num, times, protocol_list,
+                    adversary_list, f_list, seed,_lambda_list)
     h.close()
+
