@@ -320,8 +320,8 @@ demoProtocols = [SynchronousByzantine(10, 1, PossibleAdversaries[2],
                                   ByzConsistency, ByzUnanimity],
                          centralized=True, centralized_adversary=PossibleAdversaries[-1],
     has_sender=False, corrupt_sender=None,walker_num=2),
-    AsynchronousByzantine(10, 1, PossibleAdversaries[7],
-                          PossibleControllers[1], f=5, tf=5, protocol=Nakamoto,
+    AsynchronousByzantine(100, 1, PossibleAdversaries[7],
+                          PossibleControllers[1], f=50, tf=50, protocol=Nakamoto,
                           measure=[
         ByzConsistency, RelativePoolRevenue],
     centralized=True, centralized_adversary=PossibleAdversaries[

@@ -45,7 +45,7 @@ class AsynNakamotoSelfishMiner:
                 self.private_block_forest=self.public_block_forest.clone()
                 pass
             else:
-                if self.private_chain_len-self.public_chain_len>0:
+                if self.private_chain_len-self.public_chain_len==1:
                     for i in range(len(self.private_blocks)):
                         block = self.private_blocks.pop()
                         self.env.put_broadcast(self, self.represent_id, self.pki.sign(
