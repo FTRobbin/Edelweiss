@@ -16,20 +16,18 @@ class Nakamoto:
         self.pki.register(self)
 
     def receive_block(self):
-        myid = self.env.get_id(self)
-        msg = self.env.get_input_msg(self)
-        if not msg:
+        msgs = self.env.get_input_msg(self)
+        if not msgs:
             return
-        if (not self.pki.verify(msg)):
-            self.pki.verify(msg)
-            raise RuntimeError
-        block = msg.get_extraction()
-        # block_set.add(block)
-        if self.block_forest.block_is_in(block):
-            return
-        self.block_forest.insert(block)
-        self.env.put_broadcast(self, myid, self.pki.sign(
-            self, Message(myid, block, round)))
+        for msg in msgs:
+            if (not self.pki.verify(msg)):
+                self.pki.verify(msg)
+                raise RuntimeError
+            block = msg.get_extraction()
+            if self.block_forest.block_is_in(block):
+                continue
+            self.block_forest.insert(block)
+
 
     def mine_block(self):
         myid = self.env.get_id(self)
@@ -39,7 +37,6 @@ class Nakamoto:
         self.block_forest.insert(new_block)
         self.env.put_broadcast(self, myid, self.pki.sign(
             self, Message(myid, new_block, round)))
-        # self.env.put_broadcast(self,myid, self.pki.sign(self, Message(myid, new_block, round)))
 
     def put_output(self):
         self.env.put_output(self, ContentToString(

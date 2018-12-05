@@ -3,7 +3,7 @@ from Protocols.HerdingWithBroadcastFast import *
 from Experiment.Experiment import *
 from Util.Util import get_host_ip
 seed_map = {
-    43: 0,
+    198: 0,
     248: 100,
     213: 300,
     195: 500,
