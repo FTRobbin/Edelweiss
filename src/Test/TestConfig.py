@@ -326,5 +326,5 @@ demoProtocols = [SynchronousByzantine(10, 1, PossibleAdversaries[2],
         ByzConsistency, RelativePoolRevenue],
     centralized=True, centralized_adversary=PossibleAdversaries[
         7],
-    has_sender=False, corrupt_sender=False, seed=None)
+    has_sender=False, corrupt_sender=False, seed=None,gamma=0)
 ]

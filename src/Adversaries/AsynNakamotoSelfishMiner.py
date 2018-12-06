@@ -21,8 +21,8 @@ class AsynNakamotoSelfishMiner:
             id = node.env.get_id(node)
             if self.env.check_corrupt(id):
                 self.chameleon_dict[id] = node
-        self.public_block_forest = Forest()
-        self.private_block_forest = Forest()
+        self.public_block_forest = Forest(con=self.con,gamma=kargs["gamma"])
+        self.private_block_forest = Forest(con=self.con,gamma=kargs["gamma"])
         self.private_chain_len = 0
         self.public_chain_len=0
         self.unpublished_len=0
@@ -41,7 +41,7 @@ class AsynNakamotoSelfishMiner:
                 self.public_block_forest.insert(block)
             self.private_chain_len=len(self.private_block_forest.get_chain())
             self.public_chain_len=len(self.public_block_forest.get_chain())
-            if self.public_chain_len>=self.private_chain_len:
+            if self.public_chain_len>self.private_chain_len:
                 self.private_block_forest=self.public_block_forest.clone()
                 pass
             else:
@@ -51,6 +51,15 @@ class AsynNakamotoSelfishMiner:
                         self.env.put_broadcast(self, self.represent_id, self.pki.sign(
                             self.chameleon_dict[self.represent_id], Message(self.represent_id, block, round)))
                     self.public_block_forest=self.private_block_forest.clone()
+                    self.con.dispatch_honest_message()
+                elif self.private_chain_len-self.public_chain_len==0:
+                    for i in range(len(self.private_blocks)):
+                        block = self.private_blocks.pop()
+                        self.env.put_broadcast(self, self.represent_id, self.pki.sign(
+                            self.chameleon_dict[self.represent_id], Message(self.represent_id, block, round)))
+                        if not self.public_block_forest.block_is_in(block):
+                            self.public_block_forest.insert(block)
+                    self.con.dispatch_honest_message()
                 else:
                     pass
                 
@@ -63,21 +72,7 @@ class AsynNakamotoSelfishMiner:
         self.private_blocks.append(new_block)
         self.env.insert_block(new_block)
         self.private_block_forest.insert(new_block)
-        # self.private_chain_len=len(self.private_block_forest.get_chain())
-        # self.public_chain_len=len(self.public_block_forest.get_chain())
-        # if self.private_chain_len<=self.public_chain_len:
-        #     self.private_block_forest=self.public_block_forest.clone()
-        #     # raise NotImplemente
-        #     # dError
-        # else:
-        #     if self.private_chain_len-self.public_chain_len>0:
-        #         for i in range(len(self.private_blocks)):
-        #             block = self.private_blocks.pop()
-        #             self.env.put_broadcast(self, self.represent_id, self.pki.sign(
-        #                 self.chameleon_dict[self.represent_id], Message(self.represent_id, block, round)))
-        #         self.public_block_forest=self.private_block_forest.clone()
-        #     else:
-        #         pass
+
     def put_output(self):
         self.env.put_output(self, ContentToString(
             self.private_block_forest.get_chain()))

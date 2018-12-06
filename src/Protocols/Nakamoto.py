@@ -10,7 +10,7 @@ class Nakamoto:
 
     def __init__(self, **kargs):
         self.genesis_block = Nakamoto_Block.get_genesis_block()
-        self.block_forest = Forest()
+        self.block_forest = Forest(con = kargs["con"], gamma=kargs["gamma"] )
         self.env = kargs["env"]
         self.pki = kargs["pki"]
         self.pki.register(self)
@@ -24,9 +24,8 @@ class Nakamoto:
                 self.pki.verify(msg)
                 raise RuntimeError
             block = msg.get_extraction()
-            if self.block_forest.block_is_in(block):
-                continue
-            self.block_forest.insert(block)
+            if not self.block_forest.block_is_in(block):
+                self.block_forest.insert(block)
 
 
     def mine_block(self):
@@ -37,6 +36,7 @@ class Nakamoto:
         self.block_forest.insert(new_block)
         self.env.put_broadcast(self, myid, self.pki.sign(
             self, Message(myid, new_block, round)))
+        self.env.dispatch_message()
 
     def put_output(self):
         self.env.put_output(self, ContentToString(

@@ -34,6 +34,9 @@ class AsynEnvironment:
 
     def put_broadcast(self, sk, id, msg):
         self.controller.put_broadcast(id, msg)
+    
+    def dispatch_message(self):
+        self.controller.dispatch_message()
 
     def put_packet(self, sk, msg, target):
         self.controller.put_packet(msg, target)

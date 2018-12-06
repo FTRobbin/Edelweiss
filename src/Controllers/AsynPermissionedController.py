@@ -32,14 +32,14 @@ class AsynPermissionedController:
         self.round = None
         self.scheduler = NakamotoScheduler(self.n, setting.seed)
         self.counter = 0
-        self.block_forest = Forest()
+        self.block_forest = Forest(con=self,gamma=setting.gamma)
         if (self.has_sender):
             self.sender_id = setting.protocol.SENDER
         if (self.has_sender):
             self.tf = self.f
             if self.corf:
                 self.f -= 1
-        kargs = {"env": self.env, "pki": self.pki, "con": self}
+        kargs = {"env": self.env, "pki": self.pki, "con": self,"gamma":setting.gamma}
         for i in range(self.n):
             if self.is_corrupt(i) and not self.centralized:
                 current_adversaey = setting.adversary(**kargs)
@@ -54,6 +54,8 @@ class AsynPermissionedController:
                 **kargs)
 
     def is_corrupt(self, id):
+        if id == None:
+            return False
         if self.has_sender:
             return self.corf and id == 0 or id + self.f >= self.n
         else:
@@ -61,23 +63,14 @@ class AsynPermissionedController:
 
     def is_completed(self):
         self.counter += 1
-        return self.counter > 1000
+        return self.counter > 10000
 
     def run_step(self):
         [node_num, event] = self.scheduler.schedule()
         if self.is_corrupt(node_num):
             self.centralized_adversary.mine_block()
-            for node in self.node_id.keys():
-                node.receive_block()
         else:
             self.id_node[node_num].mine_block()
-            for node in self.node_id.keys():
-                node_num=self.node_id[node]
-                if not self.is_corrupt(node_num):
-                    node.receive_block()
-            self.centralized_adversary.receive_block()
-
-
 
     def drain(self):
         pass
@@ -125,7 +118,17 @@ class AsynPermissionedController:
             return
         self.block_forest.insert(block)
     
+    def dispatch_honest_message(self):
+        for node in self.node_id.keys():
+            node_num=self.node_id[node]
+            if not self.is_corrupt(node_num):
+                node.receive_block()
+    
     def dispatch_message(self):
-        for packet in self.message_pool:
-            self.message_buffer[packet[0]].append(packet[1])
-        self.message_pool = []
+        for node in self.node_id.keys():
+            node_num=self.node_id[node]
+            if not self.is_corrupt(node_num):
+                node.receive_block()
+        self.centralized_adversary.receive_block()
+        
+        

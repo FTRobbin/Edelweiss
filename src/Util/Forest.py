@@ -6,16 +6,22 @@ from Util.Util import *
 
 
 class Forest:
-    def __init__(self, _dict={}, max_depth_block_id=0, max_depth=1):
+    def __init__(self, _dict={}, max_depth_block_id=0,max_depth_block_miner=None, max_depth=1,gamma=1,con=None):
         if not _dict:
             self._dict = {}
             self._dict[0] = Nakamoto_Block(-1, has_genesis=True, id=0, depth=1)
             self.max_depth_block_id = 0
+            self.max_depth_block_miner = None
             self.max_depth = 1
+            self.gamma=gamma
+            self.con = con
         else:
             self._dict = DictDeepCopy(_dict)
             self.max_depth_block_id = max_depth_block_id
+            self.max_depth_block_miner = max_depth_block_miner
             self.max_depth = max_depth
+            self.gamma=gamma
+            self.con = con
 
     def block_is_in(self, block):
         return block.id in self._dict.keys() and self._dict[block.id].has_block
@@ -62,14 +68,58 @@ class Forest:
     def update_depth(self, block, depth):
         block.depth = depth
         if not block.children_list:
-            if self.max_depth < block.depth or self.max_depth == block.depth and block.id < self.max_depth_block_id:
+            if self.max_depth < block.depth:
                 self.max_depth = block.depth
                 self.max_depth_block_id = block.id
+                self.max_depth_block_miner = block.miner
+                return
+            else: 
+                if self.con==None:
+                    if block.id < self.max_depth_block_id:
+                        self.max_depth = block.depth
+                        self.max_depth_block_id = block.id
+                        self.max_depth_block_miner = block.miner
+                        return
+                count=0
+                if self.con.is_corrupt(block.miner):
+                    count=count+1
+                if self.con.is_corrupt(self.max_depth_block_miner):
+                    count=count+1
+                if count!=1:
+                    if block.id < self.max_depth_block_id:
+                        self.max_depth = block.depth
+                        self.max_depth_block_id = block.id
+                        self.max_depth_block_miner = block.miner
+                        return
+                else:
+                    if random.uniform(0,1)<=self.gamma and self.con.is_corrupt(block.miner):
+                        self.max_depth = block.depth
+                        self.max_depth_block_id = block.id
+                        self.max_depth_block_miner = block.miner
+                        return
         for children in block.children_list:
             self._dict[children].has_genesis = True
             self.update_depth(self._dict[children],block.depth+1)
+        
+
+    # def update_depth(self, block, depth):
+    #     block.depth = depth
+    #     if not block.children_list:
+    #         if self.max_depth < block.depth: 
+    #             # or self.max_depth == block.depth and block.id < self.max_depth_block_id:
+    #             self.max_depth = block.depth
+    #             self.max_depth_block_id = block.id
+    #         elif self.max_depth == block.depth:
+    #             if random.randint(0,1)==1:
+    #                 self.max_depth = block.depth
+    #                 self.max_depth_block_id = block.id
+    #         else:
+    #             pass
+    #     for children in block.children_list:
+    #         self._dict[children].has_genesis = True
+    #         self.update_depth(self._dict[children],block.depth+1)
 
     def clone(self):
-        return Forest(self._dict, self.max_depth_block_id, self.max_depth)
+        return Forest(self._dict, self.max_depth_block_id,self.max_depth_block_miner,self.max_depth,self.gamma,self.con)
     
 
