@@ -321,7 +321,7 @@ demoProtocols = [SynchronousByzantine(10, 1, PossibleAdversaries[2],
                          centralized=True, centralized_adversary=PossibleAdversaries[-1],
     has_sender=False, corrupt_sender=None,walker_num=2),
     AsynchronousByzantine(100, 1, PossibleAdversaries[7],
-                          PossibleControllers[1], f=50, tf=50, protocol=Nakamoto,
+                          PossibleControllers[1], f=10, tf=10, protocol=Nakamoto,
                           measure=[
         ByzConsistency, RelativePoolRevenue],
     centralized=True, centralized_adversary=PossibleAdversaries[

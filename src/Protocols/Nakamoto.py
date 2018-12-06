@@ -42,3 +42,7 @@ class Nakamoto:
         self.env.put_output(self, ContentToString(
             self.block_forest.get_chain()))
         # self.env.put_output(self,len(self.block_forest.get_longest_chain()))
+    
+    def throw_message(self):
+        self.env.get_input_msg(self)
+

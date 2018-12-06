@@ -73,7 +73,9 @@ class Forest:
                 self.max_depth_block_id = block.id
                 self.max_depth_block_miner = block.miner
                 return
-            else: 
+            elif self.max_depth > block.depth:
+                return
+            else:
                 if self.con==None:
                     if block.id < self.max_depth_block_id:
                         self.max_depth = block.depth
@@ -92,7 +94,13 @@ class Forest:
                         self.max_depth_block_miner = block.miner
                         return
                 else:
-                    if random.uniform(0,1)<=self.gamma and self.con.is_corrupt(block.miner):
+                    random_point = random.uniform(0,1)
+                    if random_point <= self.gamma and self.con.is_corrupt(block.miner):
+                        self.max_depth = block.depth
+                        self.max_depth_block_id = block.id
+                        self.max_depth_block_miner = block.miner
+                        return
+                    elif random_point > self.gamma and not self.con.is_corrupt(block.miner):
                         self.max_depth = block.depth
                         self.max_depth_block_id = block.id
                         self.max_depth_block_miner = block.miner

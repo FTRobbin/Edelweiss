@@ -52,6 +52,7 @@ class AsynNakamotoSelfishMiner:
                             self.chameleon_dict[self.represent_id], Message(self.represent_id, block, round)))
                     self.public_block_forest=self.private_block_forest.clone()
                     self.con.dispatch_honest_message()
+                    self.con.throw_adv_message()
                 elif self.private_chain_len-self.public_chain_len==0:
                     for i in range(len(self.private_blocks)):
                         block = self.private_blocks.pop()
@@ -60,8 +61,12 @@ class AsynNakamotoSelfishMiner:
                         if not self.public_block_forest.block_is_in(block):
                             self.public_block_forest.insert(block)
                     self.con.dispatch_honest_message()
+                    self.con.throw_adv_message()
                 else:
                     pass
+    def throw_message(self):
+        self.env.get_input_msg(self.chameleon_dict[self.represent_id])
+
                 
 
 

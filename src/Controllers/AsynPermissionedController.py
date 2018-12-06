@@ -63,7 +63,7 @@ class AsynPermissionedController:
 
     def is_completed(self):
         self.counter += 1
-        return self.counter > 10000
+        return self.counter > 2000
 
     def run_step(self):
         [node_num, event] = self.scheduler.schedule()
@@ -123,6 +123,12 @@ class AsynPermissionedController:
             node_num=self.node_id[node]
             if not self.is_corrupt(node_num):
                 node.receive_block()
+    
+    def throw_adv_message(self):
+        for node in self.node_id.keys():
+            node_num=self.node_id[node]
+            if self.is_corrupt(node_num):
+                node.throw_message()
     
     def dispatch_message(self):
         for node in self.node_id.keys():
