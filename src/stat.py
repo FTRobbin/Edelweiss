@@ -5,7 +5,7 @@ from ExperimentExample.IOTAStat import *
 
 
 def main():
-    IOTAStat(1000)
+    IOTAStat(250)
 
 
 if __name__ == "__main__":

@@ -61,5 +61,5 @@ def usage():
 
 if __name__ == "__main__":
     sys.setrecursionlimit(15000)
-    for i in range(1000):
+    for i in range(1):
         main()

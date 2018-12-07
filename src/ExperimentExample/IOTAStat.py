@@ -3,7 +3,7 @@ from Protocols.HerdingWithBroadcastFast import *
 from Experiment.Experiment import *
 from Util.Util import get_host_ip
 seed_map = {
-    198: 0,
+    56: 0,
     248: 100,
     213: 300,
     195: 500,
@@ -25,18 +25,15 @@ def IOTAStat(times=1):
     ip = get_host_ip()
     ip_id = int(ip.split('.')[-1])
     seed = seed_map[ip_id]
-    # seed = random.randint(1,10000000000000000)
     _lambda_list=[1]
     RunIOTAExperiment(h, node_num, times, protocol_list,
                       adversary_list, f_list, seed,_lambda_list)
     f_list = [4]
     node_num = 50
-    seed = random.randint(1,10000000000000000)
     RunIOTAExperiment(h, node_num, times, protocol_list,
                     adversary_list, f_list, seed,_lambda_list)
     f_list = [5]
     node_num = 100
-    seed = random.randint(1,10000000000000000)
     RunIOTAExperiment(h, node_num, times, protocol_list,
                     adversary_list, f_list, seed,_lambda_list)
     h.close()
