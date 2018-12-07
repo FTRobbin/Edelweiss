@@ -21,57 +21,63 @@ class AsynNakamotoSelfishMiner:
             id = node.env.get_id(node)
             if self.env.check_corrupt(id):
                 self.chameleon_dict[id] = node
-        self.public_block_forest = Forest()
-        self.private_block_forest = Forest()
-        self.private_branch_len = 0
+        self.public_block_forest = Forest(con=self.con,gamma=kargs["gamma"])
+        self.private_block_forest = Forest(con=self.con,gamma=kargs["gamma"])
+        self.private_chain_len = 0
+        self.public_chain_len=0
         self.unpublished_len=0
-    def receive_block(self,id):
-        msg = self.env.get_input_msg(self.chameleon_dict[id])
-        if not msg:
+        self.private_blocks=[]
+        self.represent_id = self.con.n-1
+    
+
+
+    def receive_block(self):
+        msgs = self.env.get_input_msg(self.chameleon_dict[self.represent_id])
+        if not msgs:
             return
-        block = msg.get_extraction()
-        if self.public_block_forest.block_is_in(block):
-            return
-        delta_prev=len(self.private_block_forest.get_chain())-len(self.public_block_forest.get_chain())
-        self.public_block_forest.insert(block)
-        if delta_prev==0:
-            self.private_block_forest=self.public_block_forest.clone()
-            self.private_branch_len=0
-            self.unpublished_len=0
-        elif delta_prev==1:
-            self.env.put_broadcast(self, id, self.pki.sign(
-                self.chameleon_dict[id], Message(id, self.private_block_forest.get_chain()[-1], round)))
-            self.unpublished_len-=1
-        elif delta_prev==2:
-            private_chain=self.private_block_forest.get_chain()
-            for i in range(self.unpublished_len):
-                self.env.put_broadcast(self, id, self.pki.sign(
-                    self.chameleon_dict[id], Message(id, private_chain[-1-i], round)))
-            self.private_branch_len=0
-            self.unpublished_len=0
-        else:
-            if self.unpublished_len==0:
-                # raise RuntimeError
-                return
-            self.env.put_broadcast(self, id, self.pki.sign(
-                self.chameleon_dict[id], Message(id, self.private_block_forest.get_chain()[-self.unpublished_len], round)))
-            self.unpublished_len=-1
-    def mine_block(self,id):
-        delta_prev=len(self.private_block_forest.get_chain())-len(self.public_block_forest.get_chain())
+        for msg in msgs:
+            block = msg.get_extraction()
+            if not self.public_block_forest.block_is_in(block):
+                self.public_block_forest.insert(block)
+            self.private_chain_len=len(self.private_block_forest.get_chain())
+            self.public_chain_len=len(self.public_block_forest.get_chain())
+            if self.public_chain_len>self.private_chain_len:
+                self.private_block_forest=self.public_block_forest.clone()
+                pass
+            else:
+                if self.private_chain_len-self.public_chain_len==1:
+                    for i in range(len(self.private_blocks)):
+                        block = self.private_blocks.pop()
+                        self.env.put_broadcast(self, self.represent_id, self.pki.sign(
+                            self.chameleon_dict[self.represent_id], Message(self.represent_id, block, round)))
+                    self.public_block_forest=self.private_block_forest.clone()
+                    self.con.dispatch_honest_message()
+                    self.con.throw_adv_message()
+                elif self.private_chain_len-self.public_chain_len==0:
+                    for i in range(len(self.private_blocks)):
+                        block = self.private_blocks.pop()
+                        self.env.put_broadcast(self, self.represent_id, self.pki.sign(
+                            self.chameleon_dict[self.represent_id], Message(self.represent_id, block, round)))
+                        if not self.public_block_forest.block_is_in(block):
+                            self.public_block_forest.insert(block)
+                    self.con.dispatch_honest_message()
+                    self.con.throw_adv_message()
+                else:
+                    pass
+    def throw_message(self):
+        self.env.get_input_msg(self.chameleon_dict[self.represent_id])
+
+                
+
+
+
+    def mine_block(self):
         new_block = Nakamoto_Block(
-            self.private_block_forest.query_max_depth_block_id(),miner=id)
+            self.private_block_forest.query_max_depth_block_id(),miner=self.represent_id)
+        self.private_blocks.append(new_block)
         self.env.insert_block(new_block)
         self.private_block_forest.insert(new_block)
-        self.private_branch_len+=1
-        self.unpublished_len+=1
-        private_chain=self.private_block_forest.get_chain()
-        if delta_prev==0 and self.private_branch_len==2:
-            for i in range(self.unpublished_len):
-                self.env.put_broadcast(self, id, self.pki.sign(
-                    self.chameleon_dict[id], Message(id, private_chain[-1-i], round)))
-            self.private_branch_len=0
-            self.unpublished_len=0
-    
+
     def put_output(self):
         self.env.put_output(self, ContentToString(
             self.private_block_forest.get_chain()))

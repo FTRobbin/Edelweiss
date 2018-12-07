@@ -1,26 +1,27 @@
-from random import shuffle
-from random import uniform
-from random import randint
+import random
 from functools import reduce
 from operator import iadd
 import queue
 
 
 class Tangle:
-    def __init__(self, genesis_site, walker_num):
+    def __init__(self, genesis_site, walker_num,_seed=None):
         self.genesis_site = genesis_site
         self.walker_num = walker_num
+        random.seed(_seed)
+        self.id_node_map={self.genesis_site.id:genesis_site}
 
     @staticmethod
-    def init_with_fork():
-        fork_tangle = Tangle(Tangle_Site.get_genesis_site(),
-                             2)
-        site2 = Tangle_Site([1], [], None, 1, 2)
-        site3 = Tangle_Site([1], [], None, 0, 3)
+    def init_with_fork(seed=None):
+        genesis_site=Tangle_Site.get_genesis_site()
+        fork_tangle = Tangle(genesis_site,
+                             2,seed)
+        site2 = Tangle_Site([1], [], None, 1, [genesis_site],0,2)
+        site3 = Tangle_Site([1], [], None, 0,[genesis_site],0, 3)
         fork_tangle.insert_site(site2)
         fork_tangle.insert_site(site3)
         return fork_tangle
-
+    
     def random_walk(self):
         walker_list = []
         walker_start_point_list = []
@@ -30,7 +31,7 @@ class Tangle:
             walker_list.append(self.genesis_site)
         while(True):
             walking_order = [i for i in range(len(walker_list))]
-            shuffle(walking_order)
+            random.shuffle(walking_order)
             to_be_deleted_walker = []
             for i in walking_order:
                 if not walker_list[i].children_list:
@@ -53,7 +54,7 @@ class Tangle:
                 cumulative_probability_list = list(reduce(lambda result, x: iadd(
                     result, [result[-1] + x]), transition_probability_list, [0])[1:])
                 sum = reduce(lambda a, b: a+b, transition_probability_list)
-                random_point = randint(1, sum)
+                random_point = random.randint(1, sum)
                 for j in range(len(cumulative_probability_list)):
                     if random_point <= cumulative_probability_list[j]:
                         walker_list[i] = walker_list[i].children_list[j]
@@ -85,13 +86,14 @@ class Tangle:
         return self.genesis_site.check_site_present(site)
 
     def insert_site(self, site):
-        if self.check_site_present(site):
-            return
+        self.id_node_map[site.id]=site
         for father_id in site.father_id_list:
-            father_site = self.genesis_site.find_site_with_id(father_id)
+            father_site = self.id_node_map[father_id]
             if not father_site:
                 raise RuntimeError
             father_site.children_list.append(site)
+            site.father_list.append(father_site)
+        site.update_weight()
 
     def check_identical(self, another_tangle):
         self.simple_print()
@@ -136,60 +138,110 @@ class Tangle:
 class Tangle_Site:
     current_id = 4
 
-    def __init__(self, father_id_list, children_list, miner, vote, id=None):
+    def __init__(self, father_id_list, children_list, miner, vote,father_list,weight, id=None):
         if id == None:
             self.id = Tangle_Site.current_id
             Tangle_Site.current_id = Tangle_Site.current_id+1
             self.father_id_list = father_id_list
+            self.father_list=father_list
             self.children_list = children_list
             self.miner = miner
             self.vote = vote
+            self.weight=weight
         else:
             self.id = id
             self.father_id_list = father_id_list
+            self.father_list = father_list
             self.children_list = children_list
             self.miner = miner
             self.vote = vote
-
+            self.weight = weight
+    
     @staticmethod
     def get_genesis_site():
-        genesis_site = Tangle_Site([], [], None, None, 1)
+        genesis_site = Tangle_Site([], [], None, None,[],0, 1)
         return genesis_site
+
+    def update_weight(self):
+        visited=[]
+        self.weight=0
+        self.update_weight_helper(visited)
+    
+    # def update_weight_helper(self,visited):
+    #     if self.id in visited:
+    #         return
+    #     visited.append(self.id)
+    #     self.weight=self.weight+1
+    #     for father in self.father_list:
+    #         father.update_weight_helper(visited)
+    
+
+    def update_weight_helper(self, visited):
+        q = []
+        q.append(self)
+        visited = {self}
+        while(q):
+            current_site = q.pop()
+            current_site.weight=current_site.weight+1
+            for child in current_site.father_list:
+                if not child in visited:
+                    visited.add(child)
+                    q.append(child)
 
     def calculate_cumulative_weight(self):
         # len(self.calculate_descendants_helper())
-        return len(self.calculate_descendants_helper())
+        # return len(self.calculate_descendants_helper())
+        return self.weight
 
     def calculate_descendants_helper(self):
-        visited = []
-        descendant_set = set()
-        self.calculate_descendants(visited, descendant_set)
-        return descendant_set
+        raise NotImplementedError
+        # visited = []
+        # descendant_set = set()
+        # self.calculate_descendants(visited, descendant_set)
+        # return descendant_set
 
     def calculate_descendants(self, visited, descendant_set):
-        if self.id in visited:
-            return
-        visited.append(self.id)
-        descendant_set.add(self.id)
-        if not self.children_list:
-            return
-        for child in self.children_list:
-            child.calculate_descendants(visited, descendant_set)
+        raise NotImplementedError
+        # if self.id in visited:
+        #     return
+        # visited.append(self.id)
+        # descendant_set.add(self.id)
+        # if not self.children_list:
+        #     return
+        # for child in self.children_list:
+        #     child.calculate_descendants(visited, descendant_set)
 
+    # def find_site_with_id_helper(self, id, visited, site):
+    #     if self.id in visited:
+    #         return
+    #     visited.append(self.id)
+    #     if self.id == id:
+    #         site[0] = self
+    #         return
+    #     if not self.children_list:
+    #         return
+    #     for child in self.children_list:
+    #         child.find_site_with_id_helper(id, visited, site)
+    #         if site[0]:
+    #             return
+    #     return
+    
     def find_site_with_id_helper(self, id, visited, site):
-        if self.id in visited:
-            return
-        visited.append(self.id)
-        if self.id == id:
-            site[0] = self
-            return
-        if not self.children_list:
-            return
-        for child in self.children_list:
-            child.find_site_with_id_helper(id, visited, site)
-            if site[0]:
+        q = []
+        q.append(self)
+        visited = {self}
+        while(q):
+            current_site = q.pop()
+            if current_site.id == id:
+                site[0] = current_site
                 return
-        return
+            for child in current_site.children_list:
+                if not child in visited:
+                    visited.add(child)
+                    q.append(child)
+        raise RuntimeError
+
+
 
     def find_site_with_id(self, id):
         visited = []
@@ -198,7 +250,7 @@ class Tangle_Site:
         return site[0]
 
     def clone(self):
-        return Tangle_Site(self.father_id_list.copy(), [], self.miner, self.vote, self.id)
+        return Tangle_Site(self.father_id_list.copy(), [], self.miner, self.vote,[],0,self.id)
 
     def copy(self):
         return self.clone()

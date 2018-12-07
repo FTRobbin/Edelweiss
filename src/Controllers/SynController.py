@@ -1,5 +1,6 @@
 from Util.Util import *
 from Oracles.Mine import Mine
+from Oracles.Mine import IOTAMine
 
 
 class SynController:
@@ -27,7 +28,11 @@ class SynController:
         self.k = setting.k
         self._lambda = setting._lambda
         self.mine = Mine(setting._lambda, self.k, self.n, seed=setting.seed)
+        self.IOTAmine = IOTAMine(setting.rounds, setting._lambda, self.n, seed=setting.seed)
         self.walker_num = setting.walker_num
+        self.running_rounds=setting.rounds
+        self.seed=setting.seed
+        self.limit=setting.limit
         if (self.has_sender):
             self.sender_id = setting.protocol.SENDER
         if (self.has_sender):
@@ -35,7 +40,7 @@ class SynController:
             if self.corf:
                 self.f -= 1
         kargs = {"env": self.env, "pki": self.pki,
-                 "mine": self.mine, "lambda": self._lambda, "con": self}
+                 "mine": self.mine, "lambda": self._lambda, "con": self, "IOTAMine":self.IOTAmine}
         for i in range(self.n):
             if self.is_corrupt(i) and not self.centralized:
                 self.node_id[setting.adversary(**kargs)] = i
@@ -52,10 +57,7 @@ class SynController:
             return id + self.tf >= self.n
 
     def is_completed(self):
-        if self.round == 30:
-            return True
-        #Temporary change
-        # return len({k: v for k, v in self.output.items() if not self.is_corrupt(k)}) == self.n - self.tf
+        return len({k: v for k, v in self.output.items() if not self.is_corrupt(k)}) == self.n - self.tf
 
     def run_step(self):
         self.round += 1
@@ -73,15 +75,6 @@ class SynController:
         while not self.is_completed():
             self.run_step()
         
-        for packet in self.message_pool:
-            self.message_buffer[packet[0]].append(packet[1])
-        self.message_history.append(self.message_pool)
-        self.message_pool = []
-        for node in self.node_id.keys():
-            node.receive_messages()
-        for node in self.node_id.keys():
-            node.put_output()
-
     def report(self):
         for x, y in self.output.items():
             print("Node %d : %s" % (x, str(y)))

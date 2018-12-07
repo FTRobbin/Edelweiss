@@ -307,23 +307,24 @@ demoProtocols = [SynchronousByzantine(10, 1, PossibleAdversaries[2],
     centralized=False, centralized_adversary=PossibleAdversaries[
         0],
     has_sender=False, corrupt_sender=False, seed=None),
-    AsynchronousByzantine(2, 1, PossibleAdversaries[7],
-                          PossibleControllers[1], f=1, tf=1, protocol=Nakamoto,
-                          measure=[
-        ByzConsistency, RelativePoolRevenue],
-    centralized=True, centralized_adversary=PossibleAdversaries[
-        7],
-    has_sender=False, corrupt_sender=False, seed=3),
+
     SynchronousByzantine(10, 1, None,
                          PossibleControllers[0], f=0, tf=0, protocol=IOTA,
                          measure=[ByzValidity,
                                   ByzConsistency, ByzUnanimity],
                          centralized=False, centralized_adversary=None,
     has_sender=False, corrupt_sender=None,walker_num=2),
-    SynchronousByzantine(10, 3, None,
-                         PossibleControllers[0], f=4, tf=4, protocol=IOTA,
+    SynchronousByzantine(100, 3, None,
+                         PossibleControllers[0], f=60, tf=60, protocol=IOTA,
                          measure=[ByzValidity,
                                   ByzConsistency, ByzUnanimity],
                          centralized=True, centralized_adversary=PossibleAdversaries[-1],
-    has_sender=False, corrupt_sender=None,walker_num=2)
+    has_sender=False, corrupt_sender=None,walker_num=2),
+    AsynchronousByzantine(100, 1, PossibleAdversaries[7],
+                          PossibleControllers[1], f=10, tf=10, protocol=Nakamoto,
+                          measure=[
+        ByzConsistency, RelativePoolRevenue],
+    centralized=True, centralized_adversary=PossibleAdversaries[
+        7],
+    has_sender=False, corrupt_sender=False, seed=None,gamma=0)
 ]

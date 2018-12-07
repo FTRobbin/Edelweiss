@@ -10,7 +10,7 @@ class AsynchronousByzantine:
                  f=0, tf=0,
                  protocol=None, measure=[],
                  centralized=False, centralized_adversary=None,
-                 has_sender=False, corrupt_sender=False, seed=None, _lambda=-1, k=1):
+                 has_sender=False, corrupt_sender=False, seed=None, _lambda=-1, k=1,gamma=0):
         self.experiment_type = "Asynchronous Byzantine"
         self.n = n
         self.input = input
@@ -29,6 +29,7 @@ class AsynchronousByzantine:
         self.seed = seed
         self._lambda = _lambda
         self.k = k
+        self.gamma=gamma
 
     def clone(self):
         raise NotImplementedError

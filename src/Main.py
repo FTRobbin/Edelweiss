@@ -49,7 +49,8 @@ def main():
                 raise RuntimeError
         else:
             assert False, "unhandled option"
-    run_only(demoProtocols[-1])
+    # run_only(demoProtocols[-1])
+    print(run_and_get_result(demoProtocols[-1]))
 
 
 def usage():
@@ -59,4 +60,6 @@ def usage():
 
 
 if __name__ == "__main__":
-    main()
+    sys.setrecursionlimit(15000)
+    for i in range(1):
+        main()

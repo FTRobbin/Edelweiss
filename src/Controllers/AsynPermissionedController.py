@@ -32,14 +32,14 @@ class AsynPermissionedController:
         self.round = None
         self.scheduler = NakamotoScheduler(self.n, setting.seed)
         self.counter = 0
-        self.block_forest = Forest()
+        self.block_forest = Forest(con=self,gamma=setting.gamma)
         if (self.has_sender):
             self.sender_id = setting.protocol.SENDER
         if (self.has_sender):
             self.tf = self.f
             if self.corf:
                 self.f -= 1
-        kargs = {"env": self.env, "pki": self.pki, "con": self}
+        kargs = {"env": self.env, "pki": self.pki, "con": self,"gamma":setting.gamma}
         for i in range(self.n):
             if self.is_corrupt(i) and not self.centralized:
                 current_adversaey = setting.adversary(**kargs)
@@ -54,6 +54,8 @@ class AsynPermissionedController:
                 **kargs)
 
     def is_corrupt(self, id):
+        if id == None:
+            return False
         if self.has_sender:
             return self.corf and id == 0 or id + self.f >= self.n
         else:
@@ -61,40 +63,23 @@ class AsynPermissionedController:
 
     def is_completed(self):
         self.counter += 1
-        return self.counter > 5
+        return self.counter > 2000
 
     def run_step(self):
         [node_num, event] = self.scheduler.schedule()
         if self.is_corrupt(node_num):
-            if event == 'Deliver':
-                self.centralized_adversary.receive_block(node_num)
-            elif event == 'Mine':
-                self.centralized_adversary.mine_block(node_num)
-            else:
-                raise RuntimeError
+            self.centralized_adversary.mine_block()
         else:
-            if event == 'Deliver':
-                self.id_node[node_num].receive_block()
-            elif event == 'Mine':
-                self.id_node[node_num].mine_block()
-            else:
-                raise RuntimeError
+            self.id_node[node_num].mine_block()
 
     def drain(self):
-        while not isListEmpty(list(self.message_pool.values())):
-            alive_list = list(
-                filter(lambda x: self.message_pool[x], self.message_pool.keys()))
-            self.scheduler.set_alive_list(alive_list)
-            node_num = self.scheduler.schedule()[0]
-            if self.is_corrupt(node_num):
-                self.centralized_adversary.receive_block(node_num)
-            else:
-                self.id_node[node_num].receive_block()
+        pass
 
     def run(self):
         while not self.is_completed():
             self.run_step()
-        self.drain()
+        
+        # self.drain()
         # raise NotImplementedError
         for node in self.node_id.keys():
             if not self.is_corrupt(self.node_id[node]):
@@ -107,8 +92,8 @@ class AsynPermissionedController:
         id = self.node_id[node]
         if not self.message_pool[id]:
             return None
-        ret = self.message_pool[id][0]
-        self.message_pool[id].remove(self.message_pool[id][0])
+        ret = self.message_pool[id]
+        self.message_pool[id]=[]
         return ret
 
     def put_broadcast(self, id, msg):
@@ -116,6 +101,7 @@ class AsynPermissionedController:
             # if i == id:
             #     continue
             self.message_pool[i].append(msg.clone())
+        i=i+1
 
     def put_packet(self, msg, target):
         self.message_pool[target].append(msg)
@@ -131,3 +117,24 @@ class AsynPermissionedController:
         if self.block_forest.block_is_in(block):
             return
         self.block_forest.insert(block)
+    
+    def dispatch_honest_message(self):
+        for node in self.node_id.keys():
+            node_num=self.node_id[node]
+            if not self.is_corrupt(node_num):
+                node.receive_block()
+    
+    def throw_adv_message(self):
+        for node in self.node_id.keys():
+            node_num=self.node_id[node]
+            if self.is_corrupt(node_num):
+                node.throw_message()
+    
+    def dispatch_message(self):
+        for node in self.node_id.keys():
+            node_num=self.node_id[node]
+            if not self.is_corrupt(node_num):
+                node.receive_block()
+        self.centralized_adversary.receive_block()
+        
+        
