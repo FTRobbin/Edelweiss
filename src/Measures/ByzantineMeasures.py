@@ -76,3 +76,7 @@ def check_identical(x,y):
     else:
         return x==y
 
+class MsgCount:
+    @staticmethod
+    def measure(con):
+        return ('cnt', con.all_decided)

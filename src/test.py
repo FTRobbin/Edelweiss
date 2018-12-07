@@ -113,7 +113,7 @@ def main():
 def usage():
     print("Usage: [options]")
     print("-h               Display help information")
-    print("-i input list    test cases to be execuated")
+    print("-i input list    test cases to be executed")
     print("-g               generate benchmark")
 
 
